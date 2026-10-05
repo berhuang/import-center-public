@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPORT CENTER</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#fff; --ink:#1d2433; --muted:#6b7487; --line:#e5e8f0;
+    --brand:#cc0000; --brand2:#1f2a44;
+    --ok:#16a34a; --ok-bg:#e8f7ee; --warn:#d97706; --warn-bg:#fdf3e2;
+    --bad:#dc2626; --bad-bg:#fdecec; --info:#2563eb; --info-bg:#e8effd; --gray-bg:#eef0f4;
+    --radius:14px; --shadow:0 1px 2px rgba(20,30,60,.05),0 4px 16px rgba(20,30,60,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+  header{background:var(--brand2);color:#fff;padding:18px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  header h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.5px}
+  header .sub{color:#aab3c8;font-size:13px}
+  header .spacer{flex:1}
+  .public .private-only{display:none!important}
+  header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+  .brand-center{grid-column:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+  .brand-row{display:flex;align-items:center;gap:12px}
+  .brand-center svg{width:34px;height:34px;fill:#e82127}
+  .brand-center h1{font-size:22px;letter-spacing:1px}
+  .header-actions{grid-column:3;justify-self:end;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+  @media(max-width:1100px){header{grid-template-columns:1fr}.brand-center,.header-actions{grid-column:1;justify-self:center;justify-content:center}}
+  nav{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:0 28px;background:var(--brand2);border-top:1px solid rgba(255,255,255,.08)}
+  nav button{background:none;border:0;color:#aab3c8;padding:12px 16px;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit}
+  nav button.active{color:#fff;border-bottom-color:var(--brand)}
+  nav button:hover{color:#fff}
+  main{padding:24px 28px;max-width:1500px;margin:0 auto}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{border-color:#c4c9d6}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn.primary:hover{background:#b00000}
+  .btn.ghost{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff}
+  .btn.sm{padding:4px 10px;font-size:12px}
+  .btn.danger{color:var(--bad)}
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  .card h3{margin:0 0 14px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .card h3 .right{margin-left:auto;font-weight:400;font-size:12px;color:var(--muted)}
+  .kpi .label{color:var(--muted);font-size:12.5px}
+  .kpi .value{font-size:28px;font-weight:700;margin-top:6px}
+  .kpi .hint{font-size:12px;color:var(--muted);margin-top:4px}
+  .kpi{border-top:4px solid var(--line)}
+  .kpi.ok{border-top-color:var(--ok)} .kpi.warn{border-top-color:var(--warn)} .kpi.bad{border-top-color:var(--bad)} .kpi.info{border-top-color:var(--info)}
+  .two{grid-template-columns:1.3fr 1fr} .three{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:1100px){.two,.three{grid-template-columns:1fr}}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+  .b-ok{background:var(--ok-bg);color:var(--ok)} .b-warn{background:var(--warn-bg);color:var(--warn)}
+  .b-bad{background:var(--bad-bg);color:var(--bad)} .b-info{background:var(--info-bg);color:var(--info)}
+  .b-gray{background:var(--gray-bg);color:var(--muted)}
+  .b-bsmi{background:#fde8e8;color:#b91c1c} .b-ncc{background:#efe7fd;color:#6d28d9} .b-other{background:var(--gray-bg);color:#475069}
+  .agency-boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+  .agency-box{border-radius:12px;padding:12px 14px;cursor:pointer;border:2px solid transparent}
+  .agency-box:hover{border-color:currentColor}
+  .agency-box .n{font-size:26px;font-weight:700}
+  .agency-box .s{font-size:12px;opacity:.85;margin-top:2px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:var(--muted);font-weight:600;background:#fafbfd;position:sticky;top:0;cursor:pointer;user-select:none;white-space:nowrap}
+  tr:hover td{background:#fafbff}
+  td.mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+  .table-wrap{overflow:auto;max-height:68vh;border:1px solid var(--line);border-radius:10px}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  input[type=text],input[type=search],input[type=date],input[type=number],select,textarea{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink)}
+  input[type=search]{min-width:260px}
+  .muted{color:var(--muted)} .small{font-size:12px}
+  .alert-item{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .alert-item:last-child{border-bottom:0}
+  .dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none}
+  .donut-wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .donut{width:150px;height:150px;border-radius:50%;position:relative;flex:none}
+  .donut::after{content:"";position:absolute;inset:26px;background:#fff;border-radius:50%}
+  .donut span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:1;font-size:26px;font-weight:700}
+  .donut span small{font-size:11px;color:var(--muted);font-weight:400}
+  .legend div{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .bars .row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px}
+  .bars .row .lbl{width:92px;color:var(--muted);text-align:right;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bars .row .track{flex:1;background:var(--gray-bg);border-radius:6px;height:18px;overflow:hidden}
+  .bars .row .fill{height:100%;border-radius:6px;background:var(--info)}
+  .bars .row .num{width:36px;font-weight:600}
+  .notice{border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:8px}
+  .notice.unpaid{border-left:5px solid var(--warn)} .notice.paid{border-left:5px solid var(--ok)} .notice.overdue{border-left:5px solid var(--bad)}
+  .notice .amt{font-size:26px;font-weight:700}
+  .kv{display:grid;grid-template-columns:110px 1fr;gap:4px 10px;font-size:13px}
+  .kv b{color:var(--muted);font-weight:500}
+  .modal-bg{position:fixed;inset:0;background:rgba(15,20,35,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .modal-bg.show{display:flex}
+  .modal{background:#fff;border-radius:16px;width:min(760px,100%);max-height:90vh;overflow:auto;padding:22px 24px}
+  .modal h2{margin:0 0 16px;font-size:18px}
+  .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form label{display:grid;gap:5px;font-size:12.5px;color:var(--muted)}
+  .form .full{grid-column:1/-1}
+  .modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+  .tab{display:none} .tab.active{display:block}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+  .pill-tabs{display:inline-flex;background:var(--gray-bg);border-radius:10px;padding:3px}
+  .pill-tabs button{border:0;background:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;color:var(--muted)}
+  .pill-tabs button.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .callout{background:var(--info-bg);color:#1e3a8a;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6}
+  .callout.warn{background:var(--warn-bg);color:#7c4a03}
+  .drop{border:2px dashed #c9cfdc;border-radius:12px;padding:22px;text-align:center;color:var(--muted);cursor:pointer}
+  .drop.over{border-color:var(--info);background:var(--info-bg)}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1d2433;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1}
+  @media print{header .btn,nav,.toolbar,.no-print{display:none!important}.tab{display:block!important}.table-wrap{max-height:none}}
+</style>
+<script>window.PUBLIC_MODE=true;document.documentElement.classList.add("public");</script>
+</head>
+<body>
+<header>
+  <div class="brand-center">
+    <div class="brand-row">
+    <svg viewBox="0 0 24 24" role="img" aria-label="Tesla"><path d="M12 5.362l2.475-3.026s4.245.09 8.471 2.054c-1.082 1.636-3.231 2.438-3.231 2.438-.146-1.439-1.154-1.79-4.354-1.79L12 24 8.619 5.034c-3.18 0-4.188.354-4.335 1.792 0 0-2.146-.795-3.229-2.43C5.28 2.431 9.525 2.34 9.525 2.34L12 5.362l-.004.002H12v-.002zm0-3.899c3.415-.03 7.326.528 11.328 2.28.535-.968.672-1.395.672-1.395C19.625.612 15.528.015 12 0 8.472.015 4.375.61 0 2.349c0 0 .195.525.672 1.396C4.674 1.989 8.585 1.435 12 1.46v.003z"/></svg>
+    <h1>IMPORT CENTER</h1>
+    </div>
+    <div class="sub">42861108 · 台灣特斯拉汽車有限公司</div>
+  </div>
+  <div class="header-actions">
+    <span class="sub" id="todayLabel"></span>
+    <button class="btn ghost" onclick="openImport()">⇪ 匯入資料</button>
+    <button class="btn ghost" onclick="openSettings()">⚙ 設定</button>
+  </div>
+</header>
+<nav>
+  <button data-tab="dash" class="active">總覽</button>
+  <button data-tab="certs">證書清單</button>
+  <button data-tab="fees" class="private-only">BSMI 年費</button>
+  <button data-tab="permits">進口許可紀錄</button>
+  <button data-tab="insp">WHEEL鋁圈</button>
+  <button data-tab="lookup">資訊查找</button>
+</nav>
+
+<main>
+  <!-- 總覽 -->
+  <section class="tab active" id="tab-dash">
+    <div class="grid kpis" id="kpis"></div>
+    <div class="grid two" style="margin-top:16px">
+      <div class="card"><h3>待辦事項 <span class="right" id="alertCount"></span></h3><div id="alerts"></div></div>
+      <div class="grid">
+        <div class="card"><h3>證書狀態分布</h3><div id="donut"></div></div>
+        <div class="card"><h3>證書到期年份</h3><div class="bars" id="yearBars"></div></div>
+      </div>
+    </div>
+    <div class="grid three" style="margin-top:16px">
+      <div class="card private-only"><h3>年費繳納狀態</h3><div class="bars" id="feeBars"></div></div>
+      <div class="card"><h3>NCC / BSMI 分類</h3><div id="agencyBoxes"></div><div class="bars" id="catBars"></div></div>
+      <div class="card"><h3>進口許可紀錄（依年份）</h3><div class="bars" id="permitBars"></div></div>
+    </div>
+  </section>
+
+  <!-- 證書清單 -->
+  <section class="tab" id="tab-certs">
+    <div class="card">
+      <div class="toolbar">
+        <div class="pill-tabs" id="agencyTabs"></div>
+        <input type="search" id="certSearch" placeholder="搜尋證書號碼、品名、型式、號列…">
+        <select id="certStatus"><option value="">全部狀態</option></select>
+        <select id="certCat"><option value="">全部類別</option></select>
+        <select id="certFee" class="private-only"><option value="">全部年費狀態</option><option>待繳</option><option>已繳</option><option>逾期未繳</option><option>未列入通知單・需確認</option><option>不適用（已過期）</option></select>
+        <div style="flex:1"></div>
+        <button class="btn" onclick="exportCertsCSV()">匯出 CSV</button>
+        <button class="btn primary" onclick="editCert()">＋ 新增證書</button>
+      </div>
+      <div class="table-wrap"><table id="certTable"></table></div>
+      <div class="small muted" style="margin-top:8px" id="certFoot"></div>
+    </div>
+  </section>
+
+  <!-- 年費 -->
+  <section class="tab private-only" id="tab-fees">
+    <div class="callout warn" style="margin-bottom:16px">
+      依繳費通知單說明：<b>未於繳費期限內繳款或辦理註銷者，依商品檢驗法第 42 條第 7 款規定，廢止其商品驗證登錄／自願性產品驗證。</b>
+      不再使用的證書，需先函原發證單位註銷，並取得新的繳納通知單後才能繳費（須全額繳納）。
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))" id="notices"></div>
+    <div id="feeGroups"></div>
+  </section>
+
+  <!-- 進口許可 -->
+  <section class="tab" id="tab-permits">
+    <div class="card" id="tariffCard" style="margin-bottom:16px">
+      <h3>海關稅則參考｜7318 鋼鐵製螺釘、螺栓、螺帽、墊圈等 <span class="right" id="tariffInfo"></span></h3>
+      <div class="callout small" style="margin-bottom:10px">
+        <b>輸入規定代號：</b>
+        <span class="badge b-bad">MW0</span> 大陸物品不准輸入：中國大陸產製者須專案向經濟部國際貿易署申請輸入許可。
+        <span class="badge b-warn" style="margin-left:8px">MP1</span> 大陸物品有條件准許輸入：須符合貿易署公告之輸入條件。
+        空白表示無特別輸入規定。點選列可篩選下方進口紀錄。
+      </div>
+      <div class="table-wrap" style="max-height:none"><table id="tariffTable"></table></div>
+    </div>
+    <div class="card" id="partCard" style="display:none;margin-bottom:16px">
+      <h3>料號查詢｜進口許可申請數量 <span class="right" id="partColsInfo"></span></h3>
+      <div class="toolbar">
+        <input type="search" id="partSearch" list="partList" placeholder="輸入料號（可用逗號或空白查多個，支援部分比對）" style="min-width:380px">
+        <datalist id="partList"></datalist>
+        <label class="small muted">料號欄位 <select id="partCol"></select></label>
+        <label class="small muted">數量欄位 <select id="qtyCol"></select></label>
+        <label class="small muted">單位欄位 <select id="unitCol"></select></label>
+      </div>
+      <div id="partResult"></div>
+      <details style="margin-top:14px" id="partSummaryBox">
+        <summary style="cursor:pointer;font-weight:600">依料號彙總（全部料號）</summary>
+        <div class="toolbar" style="margin-top:10px"><input type="search" id="partSumSearch" placeholder="篩選料號…"><button class="btn sm" onclick="exportPartSummary()">匯出彙總 CSV</button></div>
+        <div class="table-wrap" style="max-height:420px"><table id="partSumTable"></table></div>
+      </details>
+    </div>
+    <div class="card">
+      <div id="permitEmpty" class="empty">
+        <div style="font-size:40px">📄</div>
+        <p>尚未匯入進口許可申請紀錄。</p>
+        <p class="small">請從 SharePoint / OneDrive 開啟「輸入許可List.xlsx」→ 檔案 → 另存新檔 → 下載複本，再拖曳到這裡。<br>也可以在 Excel 中全選表格複製後，直接貼上。</p>
+        <button class="btn primary" onclick="openImport('permits')">匯入進口許可紀錄</button>
+      </div>
+      <div id="permitBody" style="display:none">
+        <div class="toolbar">
+          <input type="search" id="permitSearch" placeholder="搜尋任何欄位…">
+          <select id="permitStatus"><option value="">全部狀態</option></select>
+          <label class="small muted">到期欄位 <select id="permitExpCol"></select></label>
+          <label class="small muted">日期欄位 <select id="permitDateCol"></select></label>
+          <div style="flex:1"></div>
+          <button class="btn" onclick="openImport('permits')">重新匯入</button>
+          <button class="btn danger" onclick="clearPermits()">清除</button>
+        </div>
+        <div class="toolbar">
+          <label class="small muted">分類依據 <select id="permitGroupCol"></select></label>
+          <div class="pill-tabs" id="permitGroupTabs" style="flex-wrap:wrap"></div>
+          <div style="flex:1"></div>
+          <label class="small muted" style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="permitGrouped" checked>分組顯示</label>
+          <button class="btn sm" onclick="clearPermitFilters()">清除所有篩選</button>
+        </div>
+        <div class="table-wrap"><table id="permitTable"></table></div>
+        <div class="small muted" style="margin-top:8px" id="permitFoot"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 資訊查找 -->
+  <section class="tab" id="tab-lookup">
+    <div class="pill-tabs" id="lookupSub" style="margin-bottom:14px">
+      <button data-v="links" class="active">查找連結</button>
+      <button data-v="inbound" class="private-only">來貨相關資訊</button>
+    </div>
+    <div id="lookupPane-links">
+    <div class="card">
+      <h3>資訊查找 <span class="right">點擊卡片開啟（新分頁）</span></h3>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))" id="lookupLinks"></div>
+    </div>
+    <div class="card private-only" style="margin-top:16px">
+      <h3>批量開啟 WarpTrade 交易明細（TR Batch） <span class="right" id="trbCount"></span></h3>
+      <div class="callout small" style="margin-bottom:10px">
+        貼上交易編號（每行一個，或直接貼上含 TR 編號的整段文字，會自動擷取並去除重複），例如 <span class="mono">TR0002982664</span>。
+        瀏覽器可能會阻擋大量彈出視窗，請允許此頁面開啟彈出視窗；建議一次不要超過 20～30 個。
+      </div>
+      <textarea id="trbInput" rows="7" style="width:100%;font-family:Consolas,monospace" placeholder="TR0002982664&#10;TR0003022143&#10;TR0003009023"></textarea>
+      <div class="toolbar" style="margin-top:10px">
+        <button class="btn primary" onclick="openTrBatch()">全部在新分頁開啟</button>
+        <button class="btn" onclick="document.getElementById('trbInput').value='';updateTrbCount()">清除</button>
+        <span class="small muted" id="trbList"></span>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>新增常用連結</h3>
+      <div class="toolbar">
+        <input type="text" id="lkName" placeholder="名稱，例如：料號包裝資訊" style="min-width:220px">
+        <input type="text" id="lkUrl" placeholder="https://…" style="min-width:320px">
+        <input type="text" id="lkDesc" placeholder="說明（選填）" style="min-width:220px">
+        <button class="btn primary" onclick="addLookupLink()">＋ 新增</button>
+      </div>
+    </div>
+    </div>
+
+    <!-- 來貨相關資訊（資訊查找底下的分類） -->
+    <div id="lookupPane-inbound" style="display:none">
+    <div id="inboundPane-contacts">
+    <div class="card">
+      <h3>來貨相關窗口（Tesla 內部）</h3>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))" id="inboundGroups"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>新增聯絡人</h3>
+      <div class="toolbar">
+        <input type="text" id="ibGroup" list="ibGroupList" placeholder="類別，例如：Energy" style="min-width:200px">
+        <datalist id="ibGroupList"></datalist>
+        <input type="text" id="ibName" placeholder="姓名" style="min-width:260px">
+        <input type="text" id="ibNote" placeholder="備註（選填，例如負責項目、分機）" style="min-width:240px">
+        <button class="btn primary" onclick="addInboundContact()">＋ 新增</button>
+      </div>
+    </div>
+    </div>
+
+    <!-- VENDOR INFO（來貨相關資訊底下的分類） -->
+    <div id="inboundPane-vendor" style="margin-top:28px;padding-top:20px;border-top:3px solid var(--line)">
+    <div class="card">
+      <h3>VENDOR INFO｜報關行／物流廠商（外部廠商） <span class="right" id="vendorCount"></span></h3>
+      <div class="toolbar"><input type="search" id="vendorSearch" placeholder="搜尋廠商、類型、聯絡人、電話…"></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr))" id="vendorCards"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>新增廠商</h3>
+      <div class="form" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <label>類型 *<input type="text" id="vdRole" list="vdRoleList" placeholder="例如：空運報關行"></label>
+        <datalist id="vdRoleList"><option value="空運報關行"><option value="海運報關行"><option value="報驗行"><option value="貨運承攬"><option value="倉儲"></datalist>
+        <label>公司名稱 *<input type="text" id="vdCompany" placeholder="中文／英文公司名"></label>
+        <label>聯絡人<input type="text" id="vdName"></label>
+        <label>地址<input type="text" id="vdAddress"></label>
+        <label>Tel<input type="text" id="vdTel" placeholder="電話 #分機"></label>
+        <label>Fax<input type="text" id="vdFax"></label>
+        <label>Phone<input type="text" id="vdPhone"></label>
+        <label>Mail<input type="text" id="vdMail"></label>
+        <label>備註<input type="text" id="vdNote"></label>
+      </div>
+      <div class="toolbar" style="margin-top:10px"><button class="btn primary" onclick="addVendor()">＋ 新增廠商</button></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- 逐批商檢 -->
+  <section class="tab" id="tab-insp">
+    <div class="callout" style="margin-bottom:16px">
+      鋁合金輪圈須先取得 BSMI <b>型式認可證書</b>（TA 開頭），<b>每批進口仍需向標準檢驗局報驗</b>，取得「輸入商品合格證書」才能放行。
+      此頁整理所有鋁圈型式認可證書（可下載正本）與每批報驗紀錄。
+    </div>
+    <div class="grid kpis" id="inspKpis"></div>
+    <div class="card" style="margin-top:16px">
+      <h3>鋁圈型式認可證書 <span class="right" id="wheelCount"></span></h3>
+      <div class="toolbar">
+        <input type="search" id="wheelSearch" placeholder="搜尋證書號碼、型式、尺寸、車型、料號…">
+        <select id="wheelStatus"><option value="">全部狀態</option></select>
+        <select id="wheelCar"><option value="">全部車型</option></select>
+        <label class="small muted" style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="wheelFilesOnly">只看有證書檔案</label>
+      </div>
+      <div class="table-wrap" style="max-height:520px"><table id="inspTypeTable"></table></div>
+    </div>
+    <div class="card private-only" style="margin-top:16px">
+      <h3>鋁圈測試報告（Passed wheel test reports） <span class="right" id="trCount"></span></h3>
+      <div class="callout small" style="margin-bottom:10px">型式認可申請所附之合格測試報告，依「型式」號碼自動對應型式認可證書。來源：OneDrive 共用資料夾 Passed wheel test reports（已去除重複檔）。</div>
+      <div class="toolbar">
+        <input type="search" id="trSearch" placeholder="搜尋型式、報告編號、證書號碼…">
+        <select id="trCar"><option value="">全部車型</option></select>
+        <select id="trLink"><option value="">全部</option><option value="valid">對應證書有效</option><option value="inactive">對應證書已過期／不延展</option><option value="none">找不到對應證書</option></select>
+        <label class="small muted" style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="trRetest">只看重測報告</label>
+      </div>
+      <div class="table-wrap" style="max-height:520px"><table id="trTable"></table></div>
+    </div>
+    <div class="card private-only" style="margin-top:16px" id="syncCard"></div>
+    <h3 class="private-only" style="margin:22px 0 0">逐批報驗紀錄</h3>
+    <div class="card private-only" style="margin-top:16px">
+      <div class="toolbar">
+        <input type="search" id="inspSearch" placeholder="搜尋合格證號、報單號碼、料號、型式、批號…">
+        <select id="inspStatus"><option value="">全部狀態</option><option>合格</option><option>待確認</option><option>不合格</option></select>
+        <div style="flex:1"></div>
+        <button class="btn" onclick="exportInspCSV()">匯出 CSV</button>
+        <button class="btn primary" onclick="editInsp()">＋ 新增報驗紀錄</button>
+      </div>
+      <div class="table-wrap"><table id="inspTable"></table></div>
+      <div class="small muted" style="margin-top:8px">附件連結需與 index.html 放在同一資料夾才能開啟。</div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-bg" id="inspModal">
+  <div class="modal">
+    <h2 id="inspModalTitle">報驗紀錄</h2>
+    <div class="form" id="inspForm"></div>
+    <div class="actions">
+      <button class="btn danger" id="inspDeleteBtn" style="margin-right:auto">刪除</button>
+      <button class="btn" onclick="closeModal('inspModal')">取消</button>
+      <button class="btn primary" onclick="saveInsp()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 證書編輯 -->
+<div class="modal-bg" id="certModal">
+  <div class="modal">
+    <h2 id="certModalTitle">新增證書</h2>
+    <div class="form">
+      <label>證書號碼 *<input type="text" id="f_certNo"></label>
+      <label>主管機關<select id="f_agency"><option value="auto">自動判定</option><option value="BSMI">BSMI 標準檢驗局</option><option value="NCC">NCC 通傳會</option><option value="其他">其他</option></select></label>
+      <label>證書類別<input type="text" id="f_category" list="catList"></label>
+      <label>品名<input type="text" id="f_product"></label>
+      <label>型式<input type="text" id="f_model"></label>
+      <label>商品分類號列<input type="text" id="f_hs"></label>
+      <label>發證單位<input type="text" id="f_issuer"></label>
+      <label>發證日期<input type="date" id="f_issueDate"></label>
+      <label>有效期限 *<input type="date" id="f_expiryDate"></label>
+      <label class="private-only">年費通知單編號<select id="f_feeNotice"></select></label>
+      <label class="private-only">年費金額<input type="number" id="f_feeAmount"></label>
+      <label class="full">備註<textarea id="f_notes" rows="3"></textarea></label>
+    </div>
+    <datalist id="catList"><option>商品驗證登錄</option><option>自願性產品驗證</option><option>型式認可</option><option>NCC 型式認證</option><option>NCC 審驗合格證明</option><option>NCC 電信終端設備審驗</option><option>進口許可</option></datalist>
+    <div class="actions">
+      <button class="btn danger" id="certDeleteBtn" style="margin-right:auto">刪除</button>
+      <button class="btn" onclick="closeModal('certModal')">取消</button>
+      <button class="btn primary" onclick="saveCert()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 匯入 -->
+<div class="modal-bg" id="importModal">
+  <div class="modal">
+    <h2>匯入資料</h2>
+    <div style="margin-bottom:12px">
+      <span class="small muted">匯入到：</span>
+      <div class="pill-tabs" id="importTarget">
+        <button data-v="certs" class="active">證書清單（SharePoint Certificate List）</button>
+        <button data-v="permits">進口許可紀錄（輸入許可List）</button>
+      </div>
+    </div>
+    <div class="callout small" id="importHint" style="margin-bottom:12px"></div>
+    <div id="importHsBox" class="toolbar" style="display:none">
+      <label class="small">只匯入 HS 開頭為 <input type="text" id="importHsPrefix" placeholder="例如 7318（空白＝全部匯入）" style="width:220px"></label>
+      <span class="small muted">適合從大型出貨明細中只取出需要追蹤的稅則</span>
+    </div>
+    <div class="drop" id="drop">拖曳 .xlsx / .xls / .csv 檔案到這裡，或點擊選擇檔案<input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt,.json" hidden></div>
+    <p class="small muted" style="margin:14px 0 6px">或直接貼上從 Excel / SharePoint 複製的表格（第一列需為標題）：</p>
+    <textarea id="pasteBox" rows="6" style="width:100%" placeholder="證書號碼	品名	有效期限 …"></textarea>
+    <div id="importPreview" style="margin-top:12px"></div>
+    <div class="actions">
+      <button class="btn" onclick="closeModal('importModal')">取消</button>
+      <button class="btn primary" onclick="importFromPaste()">匯入貼上內容</button>
+    </div>
+  </div>
+</div>
+
+<!-- 設定 -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal" style="width:min(520px,100%)">
+    <h2>設定</h2>
+    <div class="form">
+      <label class="full">證書到期前幾天列為「需申請展延」<input type="number" id="s_renew" min="1"></label>
+      <label class="full">證書到期前幾天列為「即將到期留意」<input type="number" id="s_watch" min="1"></label>
+      <label class="full">進口許可到期前幾天提醒<input type="number" id="s_permitWarn" min="1"></label>
+    </div>
+    <p class="small muted">BSMI 驗證登錄證書有效期通常為 3 年，展延一般需於期滿前 6 個月內提出；已過期的證書無法展延，必須重新申請。實際規定請以標準檢驗局公告為準。</p>
+    <div class="actions">
+      <button class="btn danger" style="margin-right:auto" onclick="resetAll()">重設為初始資料</button>
+      <button class="btn" onclick="closeModal('settingsModal')">取消</button>
+      <button class="btn primary" onclick="saveSettings()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 初始資料 ================= */
+const SEED_VERSION = 7;
+const SEED_NOTICES = [];
+const R = (certNo, product, model, hs, expiry, fee, notice, category, notes="") =>
+  ({ id: certNo, certNo, category, product, model, hs, issuer:"經濟部標準檢驗局", issueDate:"", expiryDate:expiry,
+     feeNotice:notice, feeAmount:fee, notes, source:"BSMI 年費通知單 " + notice, extra:{} });
+/* 來源：BSMI 驗證登錄證書查詢匯出 excel.xls（2026-10-03，代號 3D160） */
+const BSMI_EXPORT = [
+  {"certNo": "CI3D9061600013", "product": "無線手機充電器", "model": "WC1", "hs": "8504.40.99.90.0-H", "issueDate": "2020-01-20", "expiryDate": "2026-01-19", "extra": {"英文名稱": "Wireless Phone Charger"}},
+  {"certNo": "CI3D9061600024", "product": "無線手機充電器 Wireless Phone Charger", "model": "WC2", "hs": "8504.40.99.20.5", "issueDate": "2020-03-06", "expiryDate": "2023-03-05", "extra": {}},
+  {"certNo": "CI3D9061600035", "product": "無線手機充電器 Wireless Phone Charger", "model": "WC3", "hs": "8504.40.99.20.5", "issueDate": "2020-09-10", "expiryDate": "2026-09-09", "extra": {}},
+  {"certNo": "CI3D0061600043", "product": "無線手機充電器", "model": "WC4", "hs": "8504.40.99.29.6", "issueDate": "2021-05-20", "expiryDate": "2027-05-19", "extra": {"英文名稱": "Wireless Phone Charger"}},
+  {"certNo": "CI3D0061600054", "product": "EXTERNAL音頻放大器", "model": "1079748", "hs": "8518.40.90.00.2", "issueDate": "2021-07-02", "expiryDate": "2027-07-01", "extra": {}},
+  {"certNo": "CI3D1061600072", "product": "無線行動電源2.0", "model": "1625884", "hs": "8507.60.00.10.7", "issueDate": "2022-10-13", "expiryDate": "2025-10-12", "extra": {}},
+  {"certNo": "CI3D1061600061", "product": "車載中控屏幕", "model": "P88", "hs": "8528.59.10.00.5", "issueDate": "2022-10-27", "expiryDate": "2025-10-26", "extra": {}},
+  {"certNo": "CI3D2061600090", "product": "無線手機充電器", "model": "WC2", "hs": "8504.40.99.20.5", "issueDate": "2023-04-17", "expiryDate": "2026-04-16", "extra": {"英文名稱": "Wireless Phone Charger"}},
+  {"certNo": "CI3D2061600106", "product": "音頻放大器", "model": "1811198", "hs": "8518.40.90.00.2", "issueDate": "2023-04-28", "expiryDate": "2026-04-27", "extra": {}},
+  {"certNo": "CI3D2061600082", "product": "車載中控屏幕", "model": "1566007", "hs": "8528.59.10.00.5", "issueDate": "2023-05-24", "expiryDate": "2026-05-23", "extra": {}},
+  {"certNo": "CI3D2061600117", "product": "無線手機充電器", "model": "WC5", "hs": "8504.40.99.29.6", "issueDate": "2023-05-30", "expiryDate": "2029-05-29", "extra": {}},
+  {"certNo": "CI3D2061600128", "product": "車載中控屏幕", "model": "1566032", "hs": "8528.59.10.00.5", "issueDate": "2023-06-14", "expiryDate": "2026-06-13", "extra": {}},
+  {"certNo": "CI3D2061600139", "product": "車載中控屏幕", "model": "E28", "hs": "8528.59.10.00.5", "issueDate": "2023-07-31", "expiryDate": "2026-07-30", "extra": {}},
+  {"certNo": "CI3D4061600142", "product": "Cybertruck發條賽車", "model": "WT6041", "hs": "9503.00.41.00.5", "issueDate": "2025-02-14", "expiryDate": "2028-02-13", "extra": {"英文名稱": "Wind-up Racer"}},
+  {"certNo": "CI3D4061600153", "product": "無線手機充電器", "model": "WC8", "hs": "8504.40.99.29.6", "issueDate": "2025-06-23", "expiryDate": "2028-06-22", "extra": {}},
+  {"certNo": "CI3D4061600164", "product": "電源供應器", "model": "GEO301U-PD30W", "hs": "8504.40.91.00.7-A", "issueDate": "2025-12-10", "expiryDate": "2028-12-09", "extra": {"系列型號": "GEO201U-AC20 GEO201U-PD20 GEO201U-PD20W GEO201U-PD20WAC-001 GEO201U-PD20WC-001 GEO301U-AC30"}},
+  {"certNo": "CI3D4061600175", "product": "無線便攜行動電源", "model": "TSL02", "hs": "8507.60.00.10.7", "issueDate": "2026-01-13", "expiryDate": "2029-01-12", "extra": {"系列型號": "2058793-00-A 2048596-00-A 2062798-00-A 2062797-00-A 2062796-00-A 2058795-00-A"}},
+  {"certNo": "CI3D5061600182", "product": "Cybercab 發條賽車", "model": "WT6042", "hs": "9503.00.41.00.5", "issueDate": "2026-01-21", "expiryDate": "2029-01-20", "extra": {"英文名稱": "Cybercab Wind-up Racer"}},
+  {"certNo": "CI3D5061600221", "product": "壁掛式Type 2充電座", "model": "1529455-02-E (槍:1589080-00-B；線:H07BZ5-F (第一來源) / H07BZ5-F (第二來源))", "hs": "8504.40.99.31.2-A", "issueDate": "2026-07-01", "expiryDate": "2029-06-30", "extra": {"系列型號": "1529455-24 (槍:1589080-00-B；線:H07BZ5-F (第一來源) / H07BZ5-F (第二來源)) 1529455-42 (槍:1589080-00-B；線:H07BZ5-F (第一來源) / H07BZ5-F (第二來源)) 1529455-16 (槍:1589080-00-B；線:H07BZ5-F (第一來源) / H07BZ5-F (第二來源))"}},
+  {"certNo": "CI3D5061600240", "product": "車載中控屏幕", "model": "P103-VN", "hs": "8528.59.10.00.5", "issueDate": "2026-06-08", "expiryDate": "2029-06-07", "extra": {}},
+  {"certNo": "CI3D5061600232", "product": "車載中控屏幕", "model": "P103-CN", "hs": "8528.59.10.00.5", "issueDate": "2026-06-08", "expiryDate": "2029-06-07", "extra": {}},
+  {"certNo": "CI3D5061600209", "product": "1:40比例Megapack行動電源", "model": "TSL03", "hs": "8507.60.00.10.7", "issueDate": "2026-06-15", "expiryDate": "2029-06-14", "extra": {}},
+  {"certNo": "CI3D5061600193", "product": "車載中控屏幕", "model": "1566007", "hs": "8528.59.10.00.5", "issueDate": "2026-06-18", "expiryDate": "2029-06-17", "extra": {}},
+  {"certNo": "CI3D5061600251", "product": "音頻放大器", "model": "1811198", "hs": "8518.40.90.00.2", "issueDate": "2026-06-25", "expiryDate": "2029-06-24", "extra": {}},
+  {"certNo": "CI3D5061600262", "product": "車載中控屏幕", "model": "P88", "hs": "8528.59.10.00.5", "issueDate": "2026-08-06", "expiryDate": "2029-08-05", "extra": {}},
+];
+const NOTICE_FEES = {};
+/* 來源：SharePoint「BSMI / NCC Certificate」清單匯出（BSMI_ NCC Certificate (1).csv） */
+const SP_HEADERS = ["證書號碼", "商品類別號", "型號", "發證日期", "到期日期", "提醒日期", "STATUS", "類別", "適用料號", "辦證單位", "NOTE", "Attachments"];
+const SP_ROWS = [
+  ["CCAF194G061AT8", "MY Car PC", "1506277", "7/31/2020", "7/31/2025", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF19LP1130T3", "VCSEC", "1089774", "5/14/2019", "5/14/2025", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF19LP1140T6", "Fascia Endpoint", "1089775", "5/14/2019", "5/14/2024", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF19LP1160T2", "M3 Key Fob", "1133148", "5/14/2019", "5/14/2024", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF20LP0990T1", "TPMS Sensor", "1472547", "5/14/2020", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF21LP0180T0", "WC4 front wireless charger", "WC4", "2/5/2021", "2/5/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF21LP0450T0", "Rear Endpoint", "1509516", "12/21/2021", "12/21/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF21LP0930T1", "ICR", "1616631", "6/29/2021", "6/29/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF21LP1530T3", "M3Y TPMS", "1472547G", "9/28/2021", "9/28/2999", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAF23LP0070T6", "New TPMS sensor", "1849171", "1/16/2023", "1/16/2028", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAH16LP1120T9", "MX Key Fob", "Key Fob", "5/18/2017", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAH16LP2480T5", "WC", "1050067", "9/12/2016", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAH21LP5690T0", "Wall Connector", "1529454", "8/31/2021", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAH22LPB140T0", "WC", "1509549-02-B", "12/21/2022", "12/21/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAI15LP0220T0", "Radar", "ARS4-B", "1/22/2015", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAI20LP0030T0", "Wireless Phone Charger", "WC1", "1/9/2020", "1/9/2025", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAJ21LP1B60T1", "BT USB HUB", "1642783", "7/20/2021", "7/20/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAK20LP0260T1", "Wireless Phone Charger", "WC2", "2/24/2020", "2/24/2025", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAK20LP1880T7", "WC3 rear wireless charger", "WC3", "9/2/2020", "9/2/2025", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAL23LP0250T3", "Glovebox BT-USB module", "1776863", "3/2/2023", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAM20Z10160T9", "AMD Car PC + TCU", "AG525R-GL", "5/20/2021", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAM23Y10060T9", "WiFi & Bluetooth Module", "AF51Y", "4/27/2022", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAN22LP0570T7", "TPMS SENSOR", "FS43X0", "7/11/2022", "7/11/2027", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAO21Y10010T1", "AMD Car PC", "ATC5CPC001", "1/12/2021", "", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP21LP2450T6", "MSKey Fob", "1614283", "7/29/2021", "7/29/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP21LP2460T9", "Fascia Endpoint", "1613851", "7/29/2021", "7/29/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP21LP2470T2", "VCSEC", "1614280", "7/29/2021", "7/29/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP21LP2480T2", "B pillar Endpoint", "1607773", "7/29/2021", "7/29/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP21LP2490T5", "MXKey Fob", "1614285", "7/29/2021", "7/29/2026", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP21LP3720T1", "Fascia Endpoint", "1733130", "1/26/2022", "1/26/2027", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP22LP0900T9", "Automotive Radar(77GHz radar", "1541584", "6/9/2023", "6/9/2028", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP22LP1180T6", "B pillar Endpoint", "1783148", "7/18/2022", "7/18/2027", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP23LP0580T2", "Interior Endpoint", "1815669", "4/18/2023", "4/18/2028", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CCAP23LP0590T2", "Rear left BLE", "1817073", "4/20/2023", "4/20/2028", "", "∞", "NCC型式認可", "", "", "", "1"],
+  ["CI33006724A834", "85272900005", "Z504 Z514 Z524", "9/15/2021", "9/14/2024", "3/14/2024", "效期內", "BSMI", "", "", "", "1"],
+  ["CI33107724A837", "85272900005", "Radio", "10/19/2021", "9/14/2024", "3/14/2024", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D0061600043", "85044099900", "WC4", "5/20/2021", "5/19/2024", "12/19/2023", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D0061600054", "85184090002", "1079748", "7/2/2021", "7/1/2024", "1/1/2024", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D1061600061", "85285910005", "P88", "10/27/2022", "10/26/2025", "4/26/2025", "失效", "BSMI", "", "", "", "1"],
+  ["CI3D1061600072", "85076000107", "1625884", "10/13/2022", "10/12/2025", "4/12/2025", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D2061600090", "85044099205", "WC2", "4/17/2023", "4/16/2026", "10/16/2025", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D2061600106", "85184090002", "1811198", "4/28/2023", "4/27/2026", "10/27/2025", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D2061600128", "85285910005", "1566032 1875931", "6/13/2023", "6/14/2026", "6/17/2029", "失效", "BSMI", "", "", "不延展", "1"],
+  ["CI3D2061600139", "85285910005", "E28", "7/31/2023", "7/30/2026", "1/30/2026", "失效", "BSMI", "", "", "不延展", "1"],
+  ["CI3D5061600193", "85285910005", "1566007", "6/18/2026", "6/17/2029", "4/17/2029", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D5061600232", "中控螢幕", "P103-CN", "6/8/2026", "6/8/2029", "1/8/2029", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D5061600240", "中控螢幕", "P103-VN", "6/8/2026", "6/7/2029", "1/8/2029", "效期內", "BSMI", "", "", "", "1"],
+  ["CI3D9061600013", "85044099900", "WC1", "1/20/2020", "1/19/2023", "", "失效", "BSMI", "", "", "", "0"],
+  ["CI3D9061600035", "85044020003", "WC3", "8/9/2023", "9/9/2026", "3/9/2026", "效期內", "BSMI", "", "", "", "1"],
+  ["TA1083D1600010", "1044221(18\"x8 1/2J)", "MODEL 3", "8/16/2019", "8/15/2022", "", "失效", "鋁圈BSMI", "", "", "不延展", "0"],
+  ["TA1093D1600020", "85285910005", "E28", "4/28/2020", "4/27/2026", "10/27/2025", "失效", "BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600035", "1059337(19\"x 8J)", "MODELＳ", "3/12/2021", "4/30/2027", "2/28/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600046", "1027247(22\"x 10J)", "MODEL X", "3/12/2021", "4/30/2027", "2/28/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600057", "1044224(19\"x 8 1/2J)", "MODEL 3", "3/12/2021", "4/30/2027", "2/28/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600068", "1066520(19\"x 9J)", "MODEL S", "4/6/2021", "4/30/2027", "2/28/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600079", "1075748(21\"x 8 1/2J)", "MODEL S", "4/6/2021", "4/30/2027", "2/28/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600080", "1066519(21\"x 8 1/2J)", "MODEL S", "6/3/2021", "6/2/2027", "4/2/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600091", "6005868(21\"x 8 1/2J)", "MODEL S", "5/21/2021", "5/20/2024", "11/20/2023", "失效", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600104", "1075749(21\"x 9J)", "MODEL S", "5/31/2021", "5/30/2027", "3/30/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600115", "1017337(21\"x 9J)", "MODEL S", "6/3/2021", "6/2/2024", "12/2/2023", "失效", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600126", "1486285(19\"x 8 1/2J", "MODEL S", "5/21/2021", "5/20/2024", "11/20/2023", "失效", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600137", "1044265 (19\"x8 1/2J)", "MODEL 3", "5/21/2021", "5/20/2027", "3/20/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600148", "1497791 (19\"x8 1/2J)", "MODEL S", "5/21/2021", "5/20/2024", "11/20/2023", "失效", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600159", "1024183 (19\"x8J)", "MODEL S", "5/31/2021", "5/30/2024", "11/30/2023", "失效", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600160", "1044261 (18\"x8 1/2J)", "MODEL 3", "6/18/2021", "6/17/2027", "4/17/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600171", "1044225 (19\"x8 1/2J)", "MODEL 3", "6/18/2021", "6/17/2027", "4/17/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600182", "1027244 (20\"x9J)", "MODEL X", "9/23/2021", "9/22/2027", "7/22/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600190", "1620222 (20\"x10J)", "MODEL S", "9/23/2021", "9/24/2027", "7/24/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600206", "1620227 (22\"x10J)", "MODEL S", "9/23/2021", "9/24/2027", "7/24/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600217", "1044264 (19\"x8 1/2J)", "MODEL 3", "10/8/2021", "10/7/2027", "8/7/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600228", "1027246 (22\"x9 J)", "MODEL S", "10/8/2021", "10/7/2027", "8/7/2027", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600239", "1420228 (21\"x9 1/2J)", "MODEL S", "11/5/2021", "11/4/2024", "5/4/2024", "需展延", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600240", "1420221 (19\"x9 1/2J)", "MODEL S", "11/9/2021", "11/8/2024", "5/8/2024", "需展延", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1103D1600251", "1420222 (19\"x10 1/2J)", "MODEL S", "11/9/2021", "11/8/2024", "5/8/2024", "需展延", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600262", "1620221 (20\"x9J)", "MODEL X", "11/9/2021", "11/8/2024", "5/8/2024", "需展延", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1103D1600270", "1420229 (21\"x10 1/2J)", "MODEL S", "11/9/2021", "11/8/2024", "5/8/2024", "需展延", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1113D1600280", "1044267 (20\"x9J)", "MODEL 3", "6/7/2022", "6/7/2025", "4/30/2025", "效期內", "鋁圈BSMI", "", "", "不延展", "1"],
+  ["TA1113D1600304", "1188222 (19\"x9 1/2J)", "MODEL Y", "9/1/2022", "8/31/2025", "2/28/2025", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1113D1600315", "1188223 (20\"x9 1/2J)", "MODEL Y", "9/1/2022", "8/31/2025", "2/28/2025", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1113D1600326", "1188226 (21\"X9 1/2J)", "MODEL Y", "9/1/2022", "8/31/2025", "2/28/2025", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1113D1600337", "1188227 (21\"x10 1/2J)", "MODEL Y", "9/1/2022", "8/31/2025", "2/28/2025", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1113D1600348", "1620226 (22\"x9 J)", "MODEL X", "8/31/2022", "8/30/2025", "2/28/2025", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1113D1600359", "1044221-00-C (18\"x8 1/2J)", "MODEL 3", "10/12/2022", "10/11/2025", "4/11/2024", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1123D1600366", "1420226(20\"x10J)", "MODEL S", "5/26/2023", "5/25/2026", "1/25/2026", "效期內", "鋁圈BSMI", "", "", "", "1"],
+  ["TA1123D1600377", "1420227(20x11J)", "MODEL S", "5/26/2023", "5/25/2026", "1/25/2026", "效期內", "鋁圈BSMI", "", "", "", "1"],
+];
+/* 以下函式在其他 const 宣告前就會被呼叫，因此不可使用 norm / parseDate 等後面才宣告的工具 */
+function spRowsToObjects(headers, rows){ return rows.map(r => Object.fromEntries(headers.map((h,i) => [h, r[i] ?? ""]))); }
+function spDate(v){
+  const s = String(v ?? "").trim();
+  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) return +m[3] >= 2900 ? "" : `${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;
+  m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  return m ? (+m[1] >= 2900 ? "" : `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`) : "";
+}
+function spFmtHS(code){
+  const m = String(code).replace(/\s/g,"").match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d)([A-Z]?)$/);
+  return m ? `${m[1]}.${m[2]}.${m[3]}.${m[4]}.${m[5]}${m[6] ? "-" + m[6] : ""}` : "";
+}
+function spToCert(o){
+  const no = String(o["證書號碼"] || "").trim(), cat0 = String(o["類別"] || "").trim();
+  const code = String(o["商品類別號"] || "").trim(), mdl = String(o["型號"] || "").replace(/[\s\/]+$/, "").trim();
+  const hs = spFmtHS(code);
+  const extra = Object.fromEntries([
+    ["SharePoint 狀態", o["STATUS"]], ["SharePoint 類別", cat0], ["提醒日期", spDate(o["提醒日期"])], ["辦證單位", o["辦證單位"]],
+  ].filter(([,v]) => v && String(v).trim()));
+  const c = { certNo:no, product:"", model:"", hs:"", category:"", issuer:"經濟部標準檢驗局",
+    issueDate:spDate(o["發證日期"]), expiryDate:spDate(o["到期日期"]),
+    partNos: String(o["適用料號"] || "").split(/[\s\/,、]+/).filter(Boolean).join(", "),
+    notes: String(o["NOTE"] || "").trim(), extra };
+  if (/NCC/i.test(cat0) || /^CC[A-Z]{2}/i.test(no))
+    Object.assign(c, {category:"NCC 型式認證", issuer:"國家通訊傳播委員會", agency:"NCC", product:code, model:mdl});
+  else if (/^TA/i.test(no) && !hs)
+    Object.assign(c, {category:"型式認可", product:/鋁圈/.test(cat0) ? "鋁合金輪圈" : mdl, model:code,
+      extra:{...extra, ...(mdl ? {"車型": mdl.replace(/Ｓ/g, "S")} : {})}});
+  else
+    Object.assign(c, {category:/^CI/i.test(no) ? "商品驗證登錄" : /^TA/i.test(no) ? "型式認可" : /^V/i.test(no) ? "自願性產品驗證" : cat0,
+      model:mdl, hs, product: hs ? "" : code});
+  return c;
+}
+/* 已有官方資料（BSMI 查詢匯出 / 證書正本）的證書：只補空白欄位、料號與備註，日期不覆蓋 */
+function mergeSharePoint(certs, objs, label){
+  let added = 0, updated = 0;
+  objs.forEach(o => {
+    const c = spToCert(o); if (!c.certNo) return;
+    const ex = certs.find(x => String(x.certNo).trim().toUpperCase() === c.certNo.toUpperCase());
+    if (!ex){ certs.push({id:c.certNo, feeNotice:"", feeAmount:0, source:label, ...c}); added++; return; }
+    ["product","model","hs","issueDate","expiryDate","category"].forEach(k => { if (!ex[k] && c[k]) ex[k] = c[k]; });
+    if (c.partNos) ex.partNos = c.partNos;
+    if (c.notes && !String(ex.notes || "").includes(c.notes)) ex.notes = ex.notes ? `${ex.notes}；${c.notes}` : c.notes;
+    ex.extra = {...(ex.extra || {}), ...c.extra};
+    if (c.expiryDate && ex.expiryDate && c.expiryDate !== ex.expiryDate) ex.extra["SharePoint 到期日（與官方資料不同）"] = c.expiryDate;
+    if (!String(ex.source || "").includes(label)) ex.source = (ex.source ? ex.source + " + " : "") + label;
+    updated++;
+  });
+  return {added, updated};
+}
+function withSharePoint(certs){ mergeSharePoint(certs, spRowsToObjects(SP_HEADERS, SP_ROWS), "SharePoint 清單"); return certs; }
+
+/* 證書正本（certificates/）：日期以正本為準，覆蓋 SharePoint 清單上的舊資料 */
+function OFFICIAL_CERTS(){
+  const C = "certificates/";
+  const wheel = {category:"型式認可", product:"鋁合金輪圈", hs:"8708.70.90.00.5", issuer:"經濟部標準檢驗局"};
+  const doc = (no, ver, issued) => ({certNo:no,
+    files:[{name:`證書正本（${ver} 版${issued ? `，${issued} 發證` : ""}）`, path:C + no + ".pdf"}],
+    extra:{"證書版次":ver, ...(issued ? {"發證日期":issued} : {})}});
+  return [
+    {...wheel, ...doc("TA1103D1600182","Y0","2024-09-24"), model:"1027244 (20x9J)", issueDate:"2021-09-23", expiryDate:"2027-09-22"},
+    {...wheel, ...doc("TA1103D1600239","Y0","2024-11-15"), model:"1420228 (21x9 1/2J)", issueDate:"2021-11-05", expiryDate:"2027-11-04"},
+    {...wheel, ...doc("TA1103D1600251","Y0","2024-11-15"), model:"1420222 (19x10 1/2J)", issueDate:"2021-11-09", expiryDate:"2027-11-08"},
+    {...wheel, ...doc("TA1103D1600270","Y0","2024-11-15"), model:"1420229 (21x10 1/2J)", issueDate:"2021-11-09", expiryDate:"2027-11-08"},
+    {...wheel, ...doc("TA1123D1600366","Y0","2026-05-29"), issueDate:"2023-05-26", expiryDate:"2029-05-25"},
+    {...wheel, ...doc("TA1123D1600377","Y0","2026-05-29"), issueDate:"2023-05-26", expiryDate:"2029-05-25"},
+    {certNo:"CI3D5061600193", expiryDate:"2029-06-17", issueDate:"2026-06-18",
+     files:[{name:"證書正本", path:C+"CI3D5061600193.pdf"}]},
+    doc("TA1113D1600337","A1","2026-07-15"), doc("TA1113D1600326","A0","2026-07-07"),
+    doc("TA1143D1600430","01","2025-06-20"), doc("TA1133D1600420","01","2025-02-20"),
+    doc("TA1133D1600395","A1","2024-12-31"), doc("TA1133D1600384","A1","2024-12-31"),
+    ...["TA1113D1600359","TA1113D1600348","TA1113D1600315","TA1113D1600304","TA1103D1600262","TA1103D1600240",
+        "TA1103D1600228","TA1103D1600217","TA1103D1600206","TA1103D1600190"].map(no => doc(no, "Y0", "")),
+    ...["TA1143D1600540","TA1143D1600532","TA1143D1600521","TA1143D1600510","TA1143D1600509","TA1143D1600493",
+        "TA1143D1600482","TA1143D1600471","TA1143D1600460","TA1143D1600452","TA1143D1600441"].map(no => doc(no, "00", "")),
+  ];
+}
+function applyOfficialCerts(certs){
+  OFFICIAL_CERTS().forEach(o => {
+    const ex = certs.find(c => String(c.certNo).toUpperCase() === o.certNo);
+    if (!ex){ certs.push({id:o.certNo, feeNotice:"", feeAmount:0, notes:"", source:"證書正本", extra:{}, ...o}); return; }
+    if (o.expiryDate && ex.expiryDate && ex.expiryDate !== o.expiryDate && !ex.extra?.["SharePoint 到期日（與官方資料不同）"])
+      (ex.extra = ex.extra || {})["展延前到期日"] = ex.expiryDate;
+    const files = [...(ex.files || [])];
+    (o.files || []).forEach(f => { if (!files.some(x => x.path === f.path)) files.push(f); });
+    Object.assign(ex, o, {extra:{...(ex.extra || {}), ...(o.extra || {})}, files, model: o.model || ex.model, product: o.product || ex.product});
+    if (!String(ex.source || "").includes("證書正本")) ex.source = (ex.source ? ex.source + " + " : "") + "證書正本";
+  });
+  return certs;
+}
+
+/* 來源：BSMI 型式認可查詢匯出 TA_BSMI_Wheel BSMI 20260222.xls（官方資料，2026-02-22）
+   欄位：證書編號, 主型式, 登錄日期, 證書有效期限, CCC_CODE, 中文名稱, 系列型號 */
+const BSMI_TA_ROWS = [
+  ["TA1093D1600020","E28","2020-04-28","2026-04-27","85285910005","車載中控屏幕",""],
+  ["TA1103D1600035","1059337(19X8J)","2021-05-01","2027-04-30","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600046","1027247(22X10J)","2021-05-01","2027-04-30","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600057","1044224(19X8 1/2J)","2021-05-01","2027-04-30","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600068","1066520 (21x9J)","2021-05-01","2027-04-30","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600079","1075748 (21x8 1/2J)","2021-05-01","2027-04-30","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600137","1044265 (19x8 1/2J)","2021-05-21","2027-05-20","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600104","1075749 (21x9 J)","2021-05-31","2027-05-30","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600080","1066519 (21x8 1/2J)","2021-06-03","2027-06-02","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600160","1044261 (18x8 1/2J)","2021-06-18","2027-06-17","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600171","1044225 (19x8 1/2J)","2021-06-18","2027-06-17","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600182","1027244 (20x9J)","2021-09-23","2027-09-22","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600190","1620222 (20x10J)","2021-09-24","2027-09-23","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600206","1620227 (22x10J)","2021-09-24","2027-09-23","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600217","1044264 (19x8 1/2J)","2021-10-08","2027-10-07","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600228","1027246 (22x9 J)","2021-10-08","2027-10-07","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600239","1420228 (21x9 1/2J)","2021-11-05","2027-11-04","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600240","1420221 (19x9 1/2J)","2021-11-09","2027-11-08","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600251","1420222 (19x10 1/2J)","2021-11-09","2027-11-08","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600262","1620221 (20x9J)","2021-11-09","2027-11-08","87087090005","鋁合金輪圈",""],
+  ["TA1103D1600270","1420229 (21x10 1/2J)","2021-11-09","2027-11-08","87087090005","鋁合金輪圈",""],
+  ["TA1113D1600348","1620226 (22x9 J)","2022-08-31","2028-08-30","87087090005","鋁合金輪圈",""],
+  ["TA1113D1600304","1188222 (19x9 1/2J)","2022-09-01","2028-08-31","87087090005","鋁合金輪圈",""],
+  ["TA1113D1600315","1188223 (20x9 1/2J)","2022-09-01","2028-08-31","87087090005","鋁合金輪圈",""],
+  ["TA1113D1600326","1188226 (21X9 1/2J)","2022-09-01","2028-08-31","87087090005","鋁合金輪圈",""],
+  ["TA1113D1600337","1188227 (21x10 1/2J)","2022-09-01","2028-08-31","87087090005","鋁合金輪圈",""],
+  ["TA1113D1600359","1044221-00-C (18x8 1/2J)","2022-10-12","2028-10-11","87087090005","鋁合金輪圈",""],
+  ["TA1123D1600366","1420226 (20x10J)","2023-05-26","2026-05-25","87087090005","鋁合金輪圈",""],
+  ["TA1123D1600377","1420227 (20x11J)","2023-05-26","2026-05-25","87087090005","鋁合金輪圈",""],
+  ["TA1133D1600384","1344229 (18x8 1/2J)","2024-06-07","2027-06-06","87087090005","鋁合金輪圈",""],
+  ["TA1133D1600395","1344227 (19x8 1/2J)","2024-07-03","2027-07-02","87087090005","鋁合金輪圈",""],
+  ["TA1133D1600401","1344226 (20x10 J)","2024-08-06","2027-08-05","87087090005","鋁合金輪圈",""],
+  ["TA1133D1600412","1344225 (20x9 J)","2024-08-06","2027-08-05","87087090005","鋁合金輪圈",""],
+  ["TA1133D1600420","1188222-00-C","2025-01-22","2028-01-21","87087090005","鋁合金輪圈","1188222-01-C"],
+  ["TA1143D1600430","2188222(20*9 1/2J)","2025-05-06","2028-05-05","87087090005","鋁合金輪圈","2188227(20*9 1/2J)"],
+  ["TA1143D1600441","2188221 (19X9.5J)","2025-06-05","2028-06-04","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600452","1420261(19x9 1/2J)","2025-07-31","2028-07-30","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600460","1420262(19x10 1/2J)","2025-07-31","2028-07-30","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600471","1620223(20x9J)","2025-07-31","2028-07-30","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600482","1620224(20x10J)","2025-07-31","2028-07-30","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600493","1420263(21x9.5J)","2025-08-19","2028-08-18","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600509","1420264(21x10.5J)","2025-08-19","2028-08-18","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600510","1620229 (22x10J)","2025-10-21","2028-10-20","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600521","1620228 (22X9 J)","2025-10-31","2028-10-30","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600532","2188223(21×9 1/2J)","2025-12-30","2028-12-29","87087090005","鋁合金輪圈",""],
+  ["TA1143D1600540","2188224(21×10 1/2J)","2025-12-30","2028-12-29","87087090005","鋁合金輪圈",""],
+];
+function applyBsmiTaExport(certs){
+  const label = "BSMI 型式認可查詢（2026-02-22）";
+  BSMI_TA_ROWS.forEach(([no, model, issue, expiry, ccc, name, series]) => {
+    const hs = spFmtHS(ccc), extra = series ? {"系列型號": series} : {};
+    const ex = certs.find(c => String(c.certNo).toUpperCase() === no);
+    if (!ex){ certs.push({id:no, certNo:no, category:"型式認可", issuer:"經濟部標準檢驗局", product:name, model, hs, issueDate:issue, expiryDate:expiry,
+      feeNotice:"", feeAmount:0, notes:"", source:label, extra}); return; }
+    ex.extra = {...(ex.extra || {}), ...extra};
+    if (ex.expiryDate && ex.expiryDate !== expiry && !ex.extra["SharePoint 到期日（與官方資料不同）"]) ex.extra["SharePoint 到期日（與官方資料不同）"] = ex.expiryDate;
+    Object.assign(ex, {category:"型式認可", model, hs: hs || ex.hs, issueDate:issue, expiryDate:expiry,
+      product: ex.product && ex.product.includes(name) ? ex.product : name});
+    if (!String(ex.source || "").includes(label)) ex.source = (ex.source ? ex.source + " + " : "") + label;
+  });
+  return certs;
+}
+
+/* 來源：NCC 型式認證資料匯出（TESLA NCC型式認證資料匯出.xlsx，官方資料，無到期日）
+   欄位：型式認證號碼, 設備名稱, 廠牌, 型號, 送審廠商, 審驗日期（民國）, 驗證機構 */
+const NCC_ROWS = [
+  ["CCAB164G0050T8","Media Control Unit(LTE FDD 900/1800/2600/WCDMA/GSM/DCS/WiFi/BT)","TESLA","1045006","台灣特斯拉汽車有限公司","105/09/14","財團法人台灣商品檢測驗證中心"],
+  ["CCAF194G0610T6","Car PC","TESLA","1527963-01","台灣特斯拉汽車有限公司","108/08/30","耕興股份有限公司"],
+  ["CCAF194G061AT8","Car Computer","Tesla","1506277","台灣特斯拉汽車有限公司","109/07/31","耕興股份有限公司"],
+  ["CCAF19LP1130T3","Security Controller","Tesla","1089774","台灣特斯拉汽車有限公司","108/05/14","耕興股份有限公司"],
+  ["CCAF19LP1140T6","Fascia Endpoint","Tesla","1089775","台灣特斯拉汽車有限公司","108/05/14","耕興股份有限公司"],
+  ["CCAF19LP1150T9","B-pillar Endpoint","Tesla","1089773E","台灣特斯拉汽車有限公司","108/05/14","耕興股份有限公司"],
+  ["CCAF19LP1160T2","Car Key Fob with BLE","Tesla","1133148","台灣特斯拉汽車有限公司","108/05/14","耕興股份有限公司"],
+  ["CCAF20LP0990T1","TPMS sensor","Tesla","1472547","台灣特斯拉汽車有限公司","109/05/14","耕興股份有限公司"],
+  ["CCAF21LP0180T0","無線手機充電器","Tesla","WC4","台灣特斯拉汽車有限公司","110/02/05","耕興股份有限公司"],
+  ["CCAF21LP0450T0","Rear Endpoint","Tesla","1509516","台灣特斯拉汽車有限公司","110/03/26","耕興股份有限公司"],
+  ["CCAF21LP0460T3","B-pillar Endpoint","Tesla","1509518D","台灣特斯拉汽車有限公司","110/03/29","耕興股份有限公司"],
+  ["CCAF21LP0930T1","車輛毫米波雷達傳感器","Tesla","1616631","台灣特斯拉汽車有限公司","110/06/29","耕興股份有限公司"],
+  ["CCAF21LP1530T3","TPMS sensor","Tesla","1472547G","台灣特斯拉汽車有限公司","110/09/28","耕興股份有限公司"],
+  ["CCAF22LP1180T0","無線行動電源2.0","Tesla","1625884","台灣特斯拉汽車有限公司","111/06/27","耕興股份有限公司"],
+  ["CCAF23LP0070T6","TPMS sensor","Tesla","1849171","台灣特斯拉汽車有限公司","112/01/16","耕興股份有限公司"],
+  ["CCAF23LP1840T8","TPMS sensor","Tesla","BTVMS01","台灣特斯拉汽車有限公司","112/10/26","耕興股份有限公司"],
+  ["CCAF24LP1980T6","V4 Supercharger Connector/Handle","Tesla","1854321","台灣特斯拉汽車有限公司","113/10/16","耕興股份有限公司"],
+  ["CCAH16LP1120T9","Keyfob","Tesla","Keyfob","Tesla Motors, Inc.","105/05/18","快特電波股份有限公司"],
+  ["CCAH16LP1130T2","Central Body Controller","Tesla","Central Body Controller","Tesla Motors, Inc.","105/05/18","快特電波股份有限公司"],
+  ["CCAH16LP1600T0","Central Body Controller","Tesla","Central Body Controller","Tesla Motors, Inc.","105/07/06","快特電波股份有限公司"],
+  ["CCAH16LP2480T5","Wall Connector 壁掛式充電座","TESLA","1050067","台灣特斯拉汽車有限公司","105/09/12","快特電波股份有限公司"],
+  ["CCAH16LP2490T8","Universal Mobile Connector 通用型轉接頭","TESLA","1015786","台灣特斯拉汽車有限公司","105/09/12","快特電波股份有限公司"],
+  ["CCAH16LP2491T0","Universal Mobile Connector 通用型轉接頭","TESLA","1058221","台灣特斯拉汽車有限公司","105/10/14","快特電波股份有限公司"],
+  ["CCAH16LP2500T1","Supercharger 超級充電站","TESLA","1034118","台灣特斯拉汽車有限公司","105/09/12","快特電波股份有限公司"],
+  ["CCAH16LP2501T0","Supercharger 超級充電站","TESLA","CS-270","台灣特斯拉汽車有限公司","105/10/14","快特電波股份有限公司"],
+  ["CCAH20LP4360T5","TPMS Trigger","TESLA","TT02","台灣特斯拉汽車有限公司","109/06/02","德凱認證股份有限公司"],
+  ["CCAH21LP4080T7","Supercharger 超級充電座","TESLA","1100346-00-H","台灣特斯拉汽車有限公司","110/08/03","德凱認證股份有限公司"],
+  ["CCAH21LP5000T1","V3 Supercharger Handle 超級充電座槍頭","TESLA","1518751","台灣特斯拉汽車有限公司","110/08/17","德凱認證股份有限公司"],
+  ["CCAH21LP5020T7","UMC Handle","TESLA","1121254-00-E","台灣特斯拉汽車有限公司","110/08/11","德凱認證股份有限公司"],
+  ["CCAH21LP5690T0","Wall Connector 壁掛式充電座","TESLA","1529455-02-D","台灣特斯拉汽車有限公司","110/08/31","德凱認證股份有限公司"],
+  ["CCAH22LPB140T0","第三代壁掛式充電座J1772","TESLA","1509549-02-B","台灣特斯拉汽車有限公司","111/12/21","德凱認證股份有限公司"],
+  ["CCAH23LP4960T1","無線手機充電器","Tesla","WC5","台灣特斯拉汽車有限公司","112/06/13","德凱認證股份有限公司"],
+  ["CCAH25LP5670T0","無線手機充電器","Tesla","WC8","台灣特斯拉汽車有限公司","114/06/04","德凱認證股份有限公司"],
+  ["CCAH25LPD880T6","無線便攜行動電源","Tesla","TSL02","台灣特斯拉汽車有限公司","114/12/24","德凱認證股份有限公司"],
+  ["CCAI20LP0030T0","Wireless Phone Charger (Qi: 127.7kHz)","Tesla","WC1","台灣特斯拉汽車有限公司","109/01/09","香港商立德國際商品試驗有限公司"],
+  ["CCAJ21LP1B60T1","Bluetooth USB Hub","TESLA","1642783","台灣特斯拉汽車有限公司","110/07/20","財團法人電信技術中心"],
+  ["CCAK20LP0260T1","無線手機充電器 Wireless Phone Charger","TESLA","WC2","台灣特斯拉汽車有限公司","109/02/24","晶復科技股份有限公司"],
+  ["CCAK20LP1880T7","無線手機充電器 Wireless Phone Charger","TESLA","WC3","台灣特斯拉汽車有限公司","109/09/02","晶復科技股份有限公司"],
+  ["CCAL18Z10050T8","Media Control Unit(WCDMA/LTE/BT/WLAN)","TESLA","1451809-03","特斯拉汽車有限公司","107/03/29","翔智科技股份有限公司"],
+  ["CCAL23LP0250T3","Glovebox BT-USB module","TESLA, Inc.","1776863","台灣特斯拉汽車有限公司","112/03/02","翔智科技股份有限公司"],
+  ["CCAM24LP0810T7","Backup Gateway 2","Tesla, Inc","1152100-15-L","台灣特斯拉汽車有限公司","113/05/24","台灣檢驗科技(股)公司"],
+  ["CCAM24LP0811T9","Backup Gateway 2","Tesla, Inc","1152100-14-L","台灣特斯拉汽車有限公司","113/05/24","台灣檢驗科技(股)公司"],
+  ["CCAN22LP0570T7","TPMS SENSOR","Tesla","FS43X0","上海保隆汽車科技股份有限公司","111/07/11","台灣德國萊因技術監護顧問股份有限公司"],
+  ["CCAP21LP2440T3","B Pillar Endpoint","TESLA","1614291","台灣特斯拉汽車有限公司","110/07/29","倍科檢驗科技有限公司"],
+  ["CCAP21LP2450T6","Key Fob","TESLA","1614283","台灣特斯拉汽車有限公司","110/07/29","倍科檢驗科技有限公司"],
+  ["CCAP21LP2460T9","Fascia Endpoint","TESLA","1613851","台灣特斯拉汽車有限公司","110/07/29","倍科檢驗科技有限公司"],
+  ["CCAP21LP2470T2","Security Controller","TESLA","1614280","台灣特斯拉汽車有限公司","110/07/29","倍科檢驗科技有限公司"],
+  ["CCAP21LP2480T2","B Pillar Endpoint","TESLA","1607773","台灣特斯拉汽車有限公司","110/07/29","倍科檢驗科技有限公司"],
+  ["CCAP21LP2490T5","Key Fob","TESLA","1614285","台灣特斯拉汽車有限公司","110/07/29","倍科檢驗科技有限公司"],
+  ["CCAP21LP3720T1","Fascia Endpoint","TESLA","1733130","台灣特斯拉汽車有限公司","111/01/26","倍科檢驗科技有限公司"],
+  ["CCAP22LP0900T9","Automotive Radar","TESLA","1541584","台灣特斯拉汽車有限公司","111/06/09","倍科檢驗科技有限公司"],
+  ["CCAP22LP1180T6","Automotive Part","TESLA","1783148","台灣特斯拉汽車有限公司","111/07/18","倍科檢驗科技有限公司"],
+  ["CCAP22LP1930T0","Automotive Part","TESLA","1783148Y","台灣特斯拉汽車有限公司","111/11/02","倍科檢驗科技有限公司"],
+  ["CCAP23LP0280T0","Automotive Part","TESLA","1783148","台灣特斯拉汽車有限公司","112/03/07","倍科檢驗科技有限公司"],
+  ["CCAP23LP0580T2","Automotive Part","TESLA","1815669","台灣特斯拉汽車有限公司","112/04/18","倍科檢驗科技有限公司"],
+  ["CCAP23LP0590T2","Automotive Part","TESLA","1817073","台灣特斯拉汽車有限公司","112/04/20","倍科檢驗科技有限公司"],
+  ["CCAP23LP1420T8","Automotive Part","TESLA","1752108","台灣特斯拉汽車有限公司","112/07/17","倍科檢驗科技有限公司"],
+  ["CCAP24LP1220T8","Stardust Endpoint","TESLA","2005551","台灣特斯拉汽車有限公司","113/04/30","倍科檢驗科技有限公司"],
+  ["CCAP24LP1310T9","Automotive Part","TESLA","1783148","台灣特斯拉汽車有限公司","113/05/08","倍科檢驗科技有限公司"],
+];
+function applyNccExport(certs){
+  const label = "NCC 型式認證查詢";
+  NCC_ROWS.forEach(([no, name, brand, model, applicant, rocDate, lab]) => {
+    const m = rocDate.match(/^(\d+)\/(\d+)\/(\d+)$/), date = m ? `${+m[1] + 1911}-${m[2]}-${m[3]}` : "";
+    const extra = {"NCC 設備名稱":name, "廠牌":brand, "送審廠商":applicant, "驗證機構":lab, "NCC 官方登錄":"是"};
+    const ex = certs.find(c => String(c.certNo).toUpperCase() === no);
+    if (!ex){ certs.push({id:no, certNo:no, category:"NCC 型式認證", issuer:"國家通訊傳播委員會", agency:"NCC", product:name, model, hs:"",
+      issueDate:date, expiryDate:"", feeNotice:"", feeAmount:0, notes:"", source:label, extra}); return; }
+    if (ex.product && ex.product !== name) extra["SharePoint 品名"] = ex.product;
+    Object.assign(ex, {agency:"NCC", category:"NCC 型式認證", issuer:"國家通訊傳播委員會", product:name, model: model || ex.model, issueDate: date || ex.issueDate,
+      extra:{...(ex.extra || {}), ...extra}});
+    if (!String(ex.source || "").includes(label)) ex.source = (ex.source ? ex.source + " + " : "") + label;
+  });
+  return certs;
+}
+
+const SEED_CERTS = applyOfficialCerts(applyNccExport(applyBsmiTaExport(withSharePoint([
+  ...BSMI_EXPORT.map(x => ({ id:x.certNo, category:"商品驗證登錄", issuer:"經濟部標準檢驗局", notes:"",
+      feeNotice: NOTICE_FEES[x.certNo] ? "" : "", feeAmount: NOTICE_FEES[x.certNo] || 0,
+      source: "BSMI 證書查詢匯出" + (NOTICE_FEES[x.certNo] ? "" : ""), ...x })),
+  R("V3D4031600053","電源櫃（超級充電座）","1450758","","2028-12-28",5000,"","自願性產品驗證"),
+  R("V3D5031600061","壁掛式Type 2充電座","1529455-02-E (槍:…)","","2029-01-21",5000,"","自願性產品驗證","型式欄位於通知單中被截斷"),
+  R("V3D5031600072","電池系統（交流電池模組）","1703673（CB5T0、…）","","2029-01-21",5000,"","自願性產品驗證","型式欄位於通知單中被截斷"),
+  ...WHEEL_TYPE_CERTS().map(x => ({ id:x.certNo, category:"型式認可", issuer:"經濟部標準檢驗局", hs:"8708.70.90.00.5",
+      feeNotice:"", feeAmount:0, notes:"取得型式認可後，每批進口仍需向 BSMI 報驗取得合格證書", source:"Outlook：WHEEL商檢", ...x })),
+]))));
+
+function WHEEL_TYPE_CERTS(){
+  const W = "";
+  return [
+    {certNo:"TA1103D1600160", product:"鋁合金輪圈 18x8.5J（PINWHEEL REFRESH）", model:"1044261 (18x8 1/2J)", issueDate:"2021-06-18", expiryDate:"2027-06-17",
+     extra:{"發證日期":"2024-05-31", "依據標準":"CNS7135（084年5月）", "識別號碼":"T3D160"},
+     files:[]},
+    {certNo:"TA1143D1600430", product:"鋁合金輪圈 20x9.5J（HELIX 2.0）", model:"2188222 (20x9 1/2J)", issueDate:"2025-05-06", expiryDate:"2028-05-05",
+     extra:{"系列型式":"2188227 (20x9 1/2J)", "發證日期":"2025-06-20", "依據標準":"CNS7135（084年5月）", "識別號碼":"T3D160"},
+     files:[]},
+    {certNo:"TA1113D1600304", product:"鋁合金輪圈 19x9.5J（APOLLO）", model:"1188222 (19x9 1/2J)", issueDate:"2022-09-01", expiryDate:"2028-08-31",
+     extra:{"發證日期":"2025-09-11", "依據標準":"CNS7135（084年5月）", "識別號碼":"T3D160"},
+     files:[]},
+  ];
+}
+function SEED_INSPECTIONS(){ return []; }
+
+/* ================= 狀態 ================= */
+const KEY = window.PUBLIC_MODE ? "importCenterPublic.v1" : "importCertManager.v1";
+let S = load();
+function load(){
+  let s = null;
+  try{ s = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+  const E = window.EMBEDDED_DATA;
+  if (E && (!s || s.embeddedStamp !== E.embeddedStamp)) s = structuredClone(E);
+  if (s && s.certs && s.notices){
+    if ((s.seedVersion || 1) < SEED_VERSION) mergeSeed(s);
+    return s;
+  }
+  return { seedVersion:SEED_VERSION, settings:{renew:180, watch:365, permitWarn:30},
+           notices: structuredClone(SEED_NOTICES), certs: structuredClone(SEED_CERTS), inspections: SEED_INSPECTIONS(),
+           permits:{headers:[], rows:[], expCol:"", dateCol:"", importedAt:"", fileName:""} };
+}
+function mergeSeed(s){
+  const key = v => String(v||"").trim().toUpperCase();
+  SEED_CERTS.forEach(seed=>{
+    const ex = s.certs.find(c=>key(c.certNo)===key(seed.certNo));
+    if (!ex) return s.certs.push(structuredClone(seed));
+    const old = ex.notes && !/被截斷/.test(ex.notes) ? ex.notes : "";
+    const notes = !old || String(seed.notes||"").includes(old) ? seed.notes : (seed.notes && !old.includes(seed.notes) ? `${old}；${seed.notes}` : old);
+    const keep = {agency: ex.agency || seed.agency, notes, extra:{...(ex.extra||{}), ...seed.extra}};
+    Object.assign(ex, structuredClone(seed), keep);
+  });
+  s.inspections = s.inspections || [];
+  SEED_INSPECTIONS().forEach(seed => {
+    const ex = s.inspections.find(x => x.id === seed.id);
+    if (!ex) return s.inspections.push(seed);
+    Object.entries(seed).forEach(([k, v]) => { if (k !== "files" && (ex[k] === "" || ex[k] == null || ex[k] === 0) && v !== "" && v != null) ex[k] = v; });
+    const files = [...(ex.files || [])];
+    seed.files.forEach(fl => { if (!files.some(x => x.path === fl.path)) files.push(fl); });
+    ex.files = files;
+  });
+  s.seedVersion = SEED_VERSION;
+  localStorage.setItem(KEY, JSON.stringify(s));
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+
+const TODAY = (()=>{ const d=new Date(); d.setHours(0,0,0,0); return d; })();
+const iso = d => d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}` : "";
+const toROC = s => { if(!s) return ""; const [y,m,d]=s.split("-"); return `${+y-1911}/${m}/${d}`; };
+const daysTo = s => { const d=parseDate(s); return d ? Math.round((d-TODAY)/86400000) : null; };
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = n => "NT$ " + Number(n||0).toLocaleString("zh-TW");
+const norm = s => String(s||"").trim().toUpperCase().replace(/\s+/g,"");
+
+function parseDate(v){
+  if (v == null || v === "") return null;
+  if (v instanceof Date) return isNaN(v) ? null : new Date(v.getFullYear(), v.getMonth(), v.getDate());
+  if (typeof v === "number" || /^\d{5}(\.\d+)?$/.test(String(v).trim())) {
+    const n = Number(v); if (n > 20000 && n < 80000) { const d = new Date(Date.UTC(1899,11,30) + n*86400000); return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); }
+  }
+  let s = String(v).trim().replace(/[年月]/g,"/").replace(/日/g,"").replace(/\./g,"/").replace(/-/g,"/").split(/[ T]/)[0];
+  let m;
+  if ((m = s.match(/^(\d{8})$/))) s = `${m[1].slice(0,4)}/${m[1].slice(4,6)}/${m[1].slice(6)}`;
+  if ((m = s.match(/^(\d{2,4})\/(\d{1,2})\/(\d{1,2})$/))) {
+    let y = +m[1]; if (y < 200) y += 1911;
+    return valid(new Date(y, +m[2]-1, +m[3]));
+  }
+  if ((m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) return valid(new Date(+m[3], +m[1]-1, +m[2]));
+  return null;
+}
+const valid = d => isNaN(d) ? null : d;
+
+function certStatus(c){
+  const d = daysTo(c.expiryDate);
+  const inf = agencyOf(c) === "NCC" && (/∞/.test(c.extra?.["SharePoint 狀態"] || "") || c.extra?.["NCC 官方登錄"] === "是");
+  if (inf) return {key:"perpetual", label:"長期有效（∞）", cls:"b-ok", color:"#0d9488", action: c.expiryDate ? `清單日期 ${c.expiryDate} 僅供參考，∞ 證書不需重新申請` : "", days:null};
+  if (d === null) return {key:"unknown", label:"無到期日", cls:"b-gray", color:"#9aa3b5", action:"請補上有效期限", days:null};
+  if (d < 0){
+    if (RETIRED_RE.test(c.notes || "")) return {key:"retired", label:"已過期・不延展", cls:"b-gray", color:"#64748b", action:`依備註不延展／已停用：${c.notes}`, days:d};
+    const r = replacementOf(c);
+    if (r) return {key:"replaced", label:"已過期・已換證", cls:"b-gray", color:"#94a3b8", action:`同型式已由 ${r.certNo} 取代（有效至 ${r.expiryDate}），無需處理`, days:d, replacedBy:r.certNo};
+    return {key:"expired", label:"已過期", cls:"b-bad", color:"#dc2626", action:"已過期無法展延；如仍需進口此型式，需重新申請", days:d};
+  }
+  if (d <= S.settings.renew) return {key:"renew", label:"需申請展延", cls:"b-warn", color:"#d97706", action:"已進入展延申請期，請儘速申請", days:d};
+  if (d <= S.settings.watch) return {key:"watch", label:"即將到期", cls:"b-info", color:"#2563eb", action:`${d - S.settings.renew} 天後進入展延申請期`, days:d};
+  return {key:"valid", label:"有效", cls:"b-ok", color:"#16a34a", action:"", days:d};
+}
+function replacementOf(c){
+  const m = norm(c.model); if (!m) return null;
+  return S.certs.filter(o => o !== c && norm(o.model) === m && (o.category||"") === (c.category||"") && (daysTo(o.expiryDate) ?? -1) >= 0)
+    .sort((a,b) => (parseDate(b.expiryDate) - parseDate(a.expiryDate)))[0] || null;
+}
+const RETIRED_RE = /不延展|註銷|取消延展|不申請|取代|改CI|新證/;
+const STATUS_ORDER = ["expired","renew","watch","valid","perpetual","replaced","retired","unknown"];
+const STATUS_LABEL = {expired:"已過期",renew:"需申請展延",watch:"即將到期",valid:"有效",perpetual:"長期有效（∞）",replaced:"已過期・已換證",retired:"已過期・不延展",unknown:"無到期日"};
+const STATUS_COLOR = {expired:"#dc2626",renew:"#d97706",watch:"#2563eb",valid:"#16a34a",perpetual:"#0d9488",replaced:"#94a3b8",retired:"#64748b",unknown:"#9aa3b5"};
+
+function noticeOf(c){ return S.notices.find(n => n.no === c.feeNotice); }
+function noticeStatus(n){
+  if (n.paid) return {key:"paid", label:"已繳", cls:"b-ok"};
+  const d = daysTo(n.deadline);
+  if (d < 0) return {key:"overdue", label:"逾期未繳", cls:"b-bad"};
+  return {key:"unpaid", label:"待繳", cls:"b-warn", days:d};
+}
+const AGENCIES = ["BSMI","NCC","其他"];
+const AGENCY_INFO = {
+  BSMI:{name:"BSMI 標準檢驗局", cls:"b-bsmi", color:"#b91c1c"},
+  NCC:{name:"NCC 通傳會", cls:"b-ncc", color:"#6d28d9"},
+  其他:{name:"其他 / 未判定", cls:"b-other", color:"#64748b"}
+};
+function detectAgency(c){
+  const text = [c.category, c.issuer, c.source, ...Object.values(c.extra||{})].join(" ");
+  const no = norm(c.certNo);
+  if (/NCC|通訊傳播|通傳會|電信管制|射頻|低功率|型式認證|審驗合格/i.test(text) || /^CC[A-Z]{2}\d{2}/.test(no)) return "NCC";
+  if (/BSMI|標準檢驗|標檢局|驗證登錄|自願性產品|型式認可|商品檢驗|安規/i.test(text) ||
+      /^(CI|V|R|Q|T|D)\d?[0-9A-Z]{2,}\d{4,}/.test(no) || /^R\d{5}$/.test(no)) return "BSMI";
+  return "其他";
+}
+const agencyOf = c => (c.agency && c.agency !== "auto") ? c.agency : detectAgency(c);
+const agencyBadge = c => { const a = agencyOf(c); return `<span class="badge ${AGENCY_INFO[a].cls}" title="${c.agency&&c.agency!=="auto"?"手動指定":"自動判定"}">${a}</span>`; };
+
+function feeStatus(c){
+  if (agencyOf(c) === "NCC") return {label:"不適用", cls:"b-gray"};
+  if (c.category === "型式認可") return {label:"不適用（型式認可）", cls:"b-gray"};
+  const n = noticeOf(c);
+  if (!n){
+    const k = certStatus(c).key;
+    if (["expired","replaced","retired"].includes(k)) return {label:"不適用（已過期）", cls:"b-gray"};
+    return {label:"未列入通知單・需確認", cls:"b-warn"};
+  }
+  return noticeStatus(n);
+}
+
+/* ================= 進口許可 ================= */
+function permitStatus(row){
+  const col = S.permits.expCol; if (!col) return {key:"na", label:"—", cls:"b-gray"};
+  const d = daysTo(row[col]);
+  if (d === null) return {key:"unknown", label:"無日期", cls:"b-gray"};
+  if (d < 0) return {key:"expired", label:"已過期", cls:"b-bad", days:d};
+  if (d <= S.settings.permitWarn) return {key:"soon", label:`${d} 天後到期`, cls:"b-warn", days:d};
+  return {key:"valid", label:"有效", cls:"b-ok", days:d};
+}
+function guessCol(headers, re, exclude){
+  return headers.find(h => re.test(h) && h !== exclude) || "";
+}
+
+/* ================= Render ================= */
+function renderAll(){ renderDash(); renderCerts(); renderFees(); renderPermits(); renderInsp(); renderTestReports(); renderSync(); renderLookup(); renderInbound(); renderVendors(); }
+
+function renderDash(){
+  document.getElementById("todayLabel").textContent = `今天 ${iso(TODAY)}（民國 ${toROC(iso(TODAY))}）` + (S.sharedAt ? `｜資料版本 ${S.sharedAt}` : "");
+  const st = S.certs.map(certStatus);
+  const cnt = k => st.filter(s => s.key === k).length;
+  const unpaid = S.notices.filter(n => !n.paid);
+  const unpaidAmt = unpaid.reduce((a,n)=>a+n.total,0);
+  const nextDl = unpaid.map(n=>daysTo(n.deadline)).sort((a,b)=>a-b)[0];
+  const nextExp = S.certs.map(c=>({c,d:daysTo(c.expiryDate)})).filter(x=>x.d!==null && x.d>=0).sort((a,b)=>a.d-b.d)[0];
+  const pStats = S.permits.rows.map(permitStatus);
+  const kpis = [
+    {cls:"info", label:"證書總數", value:S.certs.length, hint: window.PUBLIC_MODE ? "來源：BSMI／NCC 證書查詢" : `來源：BSMI 證書查詢 + 年費通知單${S.certs.some(c=>c.source&&c.source.includes("SharePoint"))?" + SharePoint":""}`},
+    {cls:"ok", label:"有效", value:cnt("valid")+cnt("watch")+cnt("perpetual"), hint:nextExp?`下一張到期：${nextExp.c.certNo}（${nextExp.c.expiryDate}）`:""},
+    {cls:cnt("renew")?"warn":"ok", label:"需申請展延", value:cnt("renew"), hint:`到期前 ${S.settings.renew} 天內`},
+    {cls:cnt("expired")?"bad":"ok", label:"已過期（未換證）", value:cnt("expired"), hint:(cnt("expired")?"如仍需進口請重新申請":"目前無未處理的過期證書") + (cnt("replaced")+cnt("retired")?`；另 ${cnt("replaced")} 張已換證、${cnt("retired")} 張不延展`:"")},
+    {cls:unpaidAmt?"warn":"ok", label:"BSMI 年費待繳", value:unpaidAmt?money(unpaidAmt):"已繳清", hint:unpaid.length?`${unpaid.length} 張通知單，${nextDl>=0?`剩 ${nextDl} 天`:`已逾期 ${-nextDl} 天`}`:"所有通知單皆已繳"},
+    {cls:"info", label:"進口許可紀錄", value:S.permits.rows.length||"未匯入", hint:S.permits.rows.length?`${pStats.filter(p=>p.key==="expired").length} 筆已過期`:"請匯入輸入許可List"},
+  ].filter(k => !(window.PUBLIC_MODE && k.label === "BSMI 年費待繳"));
+  document.getElementById("kpis").innerHTML = kpis.map(k=>`<div class="card kpi ${k.cls}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="hint">${esc(k.hint)}</div></div>`).join("");
+
+  // 待辦
+  const items = [];
+  S.notices.forEach(n=>{
+    const ns = noticeStatus(n);
+    if (ns.key==="paid") return;
+    items.push({pri: ns.key==="overdue"?0:1, color: ns.key==="overdue"?"#dc2626":"#d97706",
+      title:`${n.type} ${n.feeYear} 年度年費 ${money(n.total)}（${n.count} 張證書）`,
+      desc:`通知單 ${n.no} · 繳費期限 ${n.deadline}（民國 ${toROC(n.deadline)}）· ${ns.key==="overdue"?`已逾期 ${-daysTo(n.deadline)} 天`:`剩 ${ns.days} 天`}`,
+      btn:`<button class="btn sm" onclick="gotoTab('fees')">前往繳費</button>`});
+    const o = noticeOwner(n);
+    if (o && !(S.feeNotify||{})[o.p]) items.push({pri:1, color:"#d97706",
+      title:`通知 ${o.owner}（${o.contact}）繳納 ${n.type} 年費 ${money(n.total)}`,
+      desc:`${o.p} 開頭證書屬 ${o.owner}；通知單 ${n.no}，期限 ${n.deadline}`,
+      btn:`<button class="btn sm" onclick="gotoTab('fees')">去通知</button>`});
+  });
+  const expiredBy = {};
+  S.certs.forEach(c=>{ if (certStatus(c).key==="expired") (expiredBy[c.category||"未分類"] = expiredBy[c.category||"未分類"] || []).push(c); });
+  Object.entries(expiredBy).forEach(([cat, list])=>items.push({pri:0, color:"#dc2626",
+    title:`${cat}：${list.length} 張已過期，未換證也未註記不延展`,
+    desc:`如仍需進口請重新申請：${list.map(c=>`${c.certNo}（${c.model}，${c.expiryDate}）`).join("、")}`,
+    btn:`<button class="btn sm" onclick="gotoTab('certs');document.getElementById('certStatus').value='expired';document.getElementById('certCat').value='${esc(cat)}';renderCerts()">查看</button>`}));
+  S.certs.forEach(c=>{
+    const s = certStatus(c);
+    if (s.key==="renew") items.push({pri:1,color:s.color,title:`${c.certNo} ${c.product} 需申請展延`,desc:`到期日 ${c.expiryDate}，剩 ${s.days} 天`,btn:`<button class="btn sm" onclick="editCert('${esc(c.id)}')">查看</button>`});
+    else if (s.key==="unknown") items.push({pri:3,color:s.color,title:`${c.certNo} 缺少有效期限`,desc:"請補上到期日以便追蹤",btn:`<button class="btn sm" onclick="editCert('${esc(c.id)}')">補資料</button>`});
+  });
+  S.permits.rows.forEach((r,i)=>{
+    const p = permitStatus(r);
+    if (p.key==="soon") items.push({pri:2,color:"#d97706",title:`進口許可 ${esc(permitKey(r))} ${p.label}`,desc:`到期日 ${esc(r[S.permits.expCol])}`,btn:`<button class="btn sm" onclick="gotoTab('permits')">查看</button>`});
+  });
+  if (!S.permits.rows.length) items.push({pri:4,color:"#9aa3b5",title:"尚未匯入進口許可申請紀錄",desc:"下載「輸入許可List.xlsx」後匯入即可整合追蹤",btn:`<button class="btn sm" onclick="openImport('permits')">匯入</button>`});
+  const pendBy = {};
+  (S.inspections||[]).filter(i=>i.status!=="合格").forEach(i=>(pendBy[i.declNo] = pendBy[i.declNo] || []).push(i));
+  Object.entries(pendBy).forEach(([decl, list])=>items.push({pri:1,color:"#d97706",
+    title:`WHEEL鋁圈報驗 ${decl}：${list.length} 個項次尚未取得合格證`,
+    desc:list.map(i=>`${i.item?`項次 ${i.item}`:"—"}${i.partNo?`（${i.partNo}）`:""}：${i.notes || "尚未取得輸入商品合格證書"}`).join("；"),
+    btn:`<button class="btn sm" onclick="gotoTab('insp');document.getElementById('inspSearch').value='${esc(decl)}';renderInsp()">查看</button>`}));
+  const noFee = window.PUBLIC_MODE ? [] : S.certs.filter(c=>feeStatus(c).label==="未列入通知單・需確認");
+  if (noFee.length) items.push({pri:1,color:"#d97706",title:`${noFee.length} 張有效 BSMI 證書未列入年費通知單`,
+    desc:`請向 BSMI 確認是否另有繳費單或已繳：${noFee.map(c=>`${c.certNo}（${c.model}）`).join("、")}`,
+    btn:`<button class="btn sm" onclick="gotoTab('certs');document.getElementById('certFee').value='未列入通知單・需確認';renderCerts()">查看</button>`});
+  const watch = S.certs.filter(c=>certStatus(c).key==="watch");
+  if (watch.length) items.push({pri:3,color:"#2563eb",title:`${watch.length} 張證書一年內到期`,desc:watch.map(c=>c.certNo).join("、"),btn:""});
+  items.sort((a,b)=>a.pri-b.pri);
+  document.getElementById("alertCount").textContent = `${items.length} 項`;
+  document.getElementById("alerts").innerHTML = items.length ? items.map(i=>`
+    <div class="alert-item"><span class="dot" style="background:${i.color}"></span>
+      <div style="flex:1"><div style="font-weight:600">${esc(i.title)}</div><div class="small muted">${esc(i.desc)}</div></div>${i.btn}</div>`).join("")
+    : `<div class="empty">🎉 目前沒有待辦事項</div>`;
+
+  // 狀態 donut
+  const total = S.certs.length || 1; let acc = 0;
+  const segs = STATUS_ORDER.map(k=>{ const n=cnt(k); const from=acc/total*360; acc+=n; return n?`${STATUS_COLOR[k]} ${from}deg ${acc/total*360}deg`:null; }).filter(Boolean);
+  document.getElementById("donut").innerHTML = `<div class="donut-wrap">
+    <div class="donut" style="background:conic-gradient(${segs.join(",")||"#eee 0 360deg"})"><span>${S.certs.length}<small>張證書</small></span></div>
+    <div class="legend">${STATUS_ORDER.filter(k=>cnt(k)).map(k=>`<div><i style="background:${STATUS_COLOR[k]}"></i>${STATUS_LABEL[k]}　<b>${cnt(k)}</b></div>`).join("")}</div></div>`;
+
+  // 年份
+  const byYear = {};
+  S.certs.forEach(c=>{ const d=parseDate(c.expiryDate); const y=d?d.getFullYear()+" 年":"未知"; byYear[y]=(byYear[y]||0)+1; });
+  bars("yearBars", Object.entries(byYear).sort(), "#2563eb");
+
+  // 年費
+  bars("feeBars", S.notices.map(n=>[`${n.no}`, n.total, noticeStatus(n)]), null, true);
+  // 主管機關 / 類別
+  document.getElementById("agencyBoxes").innerHTML = `<div class="agency-boxes">${AGENCIES.map(a=>{
+    const list = S.certs.filter(c=>agencyOf(c)===a);
+    if (a==="其他" && !list.length) return "";
+    const ks = list.map(certStatus).map(s=>s.key);
+    const risk = ks.filter(k=>k==="expired").length, ren = ks.filter(k=>k==="renew").length;
+    return `<div class="agency-box ${AGENCY_INFO[a].cls}" onclick="showAgency('${a}')">
+      <div class="small">${AGENCY_INFO[a].name}</div><div class="n">${list.length}</div>
+      <div class="s">${list.length ? (risk||ren ? `過期 ${risk}・需展延 ${ren}` : "全部有效") : "尚無證書"}</div></div>`;
+  }).join("")}</div>`;
+  const byCat = {}; S.certs.forEach(c=>{ const k=`${agencyOf(c)}・${c.category||"未分類"}`; byCat[k]=(byCat[k]||0)+1; });
+  const catEntries = Object.entries(byCat).sort((a,b)=>a[0].localeCompare(b[0])||b[1]-a[1]);
+  const maxCat = Math.max(1, ...catEntries.map(e=>e[1]));
+  document.getElementById("catBars").innerHTML = catEntries.map(([k,v])=>{ const a=k.split("・")[0];
+    return `<div class="row"><div class="lbl" style="width:130px" title="${esc(k)}">${esc(k)}</div><div class="track"><div class="fill" style="width:${v/maxCat*100}%;background:${AGENCY_INFO[a].color}"></div></div><div class="num">${v}</div></div>`; }).join("");
+  // 許可
+  const PG = S.permits.groupCol ?? guessPermitGroupCol(S.permits.headers || []);
+  if (S.permits.rows.length && PG){
+    const byG = {}; S.permits.rows.forEach(r=>{ const g = String(r[PG] ?? "").trim() || "（未填）"; byG[g] = (byG[g]||0) + 1; });
+    bars("permitBars", Object.entries(byG).sort((a,b)=>b[1]-a[1]), "#cc0000");
+    document.querySelector("#permitBars").closest(".card").querySelector("h3").textContent = `進口許可紀錄（依${PG}）`;
+  } else if (S.permits.rows.length && S.permits.dateCol){
+    const byY = {}; S.permits.rows.forEach(r=>{ const d=parseDate(r[S.permits.dateCol]); const y=d?String(d.getFullYear()):"未知"; byY[y]=(byY[y]||0)+1; });
+    bars("permitBars", Object.entries(byY).sort(), "#cc0000");
+  } else document.getElementById("permitBars").innerHTML = `<div class="muted small">${S.permits.rows.length?"請在「進口許可紀錄」頁選擇日期欄位":"尚未匯入"}</div>`;
+}
+function bars(id, entries, color, isFee){
+  const max = Math.max(1, ...entries.map(e=>e[1]));
+  document.getElementById(id).innerHTML = entries.length ? entries.map(([k,v,st])=>{
+    const c = isFee ? ({paid:"#16a34a",unpaid:"#d97706",overdue:"#dc2626"}[st.key]) : color;
+    return `<div class="row"><div class="lbl" title="${esc(k)}">${esc(k)}</div><div class="track"><div class="fill" style="width:${v/max*100}%;background:${c}"></div></div><div class="num" style="width:${isFee?"auto":"36px"}">${isFee?`${money(v)} <span class="badge ${st.cls}">${st.label}</span>`:v}</div></div>`;
+  }).join("") : `<div class="muted small">無資料</div>`;
+}
+
+/* ---------- 證書清單 ---------- */
+let certSort = {key:"expiryDate", dir:1};
+const CERT_COLS = [
+  {k:"certNo", t:"證書號碼", mono:true},
+  {k:"_agency", t:"主管機關"},
+  {k:"category", t:"類別"},
+  {k:"product", t:"品名"},
+  {k:"model", t:"型式"},
+  {k:"hs", t:"商品分類號列", mono:true},
+  {k:"expiryDate", t:"有效期限"},
+  {k:"_days", t:"剩餘天數"},
+  {k:"_status", t:"狀態"},
+  ...(window.PUBLIC_MODE ? [] : [{k:"_fee", t:"116 年費"}]),
+  {k:"_action", t:"建議動作"},
+];
+function initCertFilters(){
+  document.getElementById("certStatus").innerHTML = `<option value="">全部狀態</option>` + STATUS_ORDER.map(k=>`<option value="${k}">${STATUS_LABEL[k]}</option>`).join("");
+  const cats = [...new Set(S.certs.filter(c=>!agencyFilter || agencyOf(c)===agencyFilter).map(c=>c.category||"未分類"))];
+  document.getElementById("certCat").innerHTML = `<option value="">全部類別</option>` + cats.map(c=>`<option>${esc(c)}</option>`).join("");
+}
+let agencyFilter = "";
+function showAgency(a){ agencyFilter = a; gotoTab("certs"); renderCerts(); }
+function renderAgencyTabs(){
+  const n = a => S.certs.filter(c=>!a || agencyOf(c)===a).length;
+  const tabs = ["", ...AGENCIES.filter(a=>a!=="其他" || n(a))];
+  document.getElementById("agencyTabs").innerHTML = tabs.map(a=>
+    `<button class="${agencyFilter===a?"active":""}" onclick="agencyFilter='${a}';renderCerts()">${a||"全部"} <span class="muted">${n(a)}</span></button>`).join("");
+}
+function renderCerts(){
+  initCertFiltersKeep();
+  renderAgencyTabs();
+  const q = document.getElementById("certSearch").value.trim().toLowerCase();
+  const fs = document.getElementById("certStatus").value, fc = document.getElementById("certCat").value, ff = document.getElementById("certFee").value;
+  let list = S.certs.map(c=>({c, s:certStatus(c), f:feeStatus(c), a:agencyOf(c)}));
+  list = list.filter(({c,s,f,a}) =>
+    (!agencyFilter || a===agencyFilter) &&
+    (!q || [c.certNo,a,c.product,c.model,c.hs,c.category,c.notes,c.feeNotice,c.partNos,...Object.values(c.extra||{})].join(" ").toLowerCase().includes(q)) &&
+    (!fs || s.key===fs) && (!fc || (c.category||"未分類")===fc) && (!ff || f.label===ff));
+  const val = (x,k) => k==="_days"||k==="expiryDate" ? (x.s.days ?? 1e9) : k==="_status" ? STATUS_ORDER.indexOf(x.s.key) : k==="_fee" ? x.f.label : k==="_agency" ? x.a : String(x.c[k]||"");
+  list.sort((a,b)=>{ const va=val(a,certSort.key), vb=val(b,certSort.key); return (va>vb?1:va<vb?-1:0)*certSort.dir; });
+  const head = `<thead><tr>${CERT_COLS.map(col=>`<th onclick="sortCerts('${col.k}')">${col.t}${certSort.key===col.k?(certSort.dir>0?" ▲":" ▼"):""}</th>`).join("")}<th></th></tr></thead>`;
+  const body = list.map(({c,s,f})=>`<tr>
+    <td class="mono"><b>${esc(c.certNo)}</b>${c.files?.length?`<div>${fileLinks(c.files)}</div>`:""}</td><td>${agencyBadge(c)}</td><td>${esc(c.category)}</td><td>${esc(c.product)}</td><td>${esc(c.model)}${c.partNos?`<div class="small muted">料號：${esc(c.partNos)}</div>`:""}</td>
+    <td class="mono">${esc(c.hs)}</td><td>${esc(c.expiryDate)}<div class="small muted">${c.expiryDate?"民國 "+toROC(c.expiryDate):""}</div></td>
+    <td>${s.days===null?"—":s.days<0?`<span style="color:var(--bad)">逾 ${-s.days}</span>`:s.days.toLocaleString()}</td>
+    <td><span class="badge ${s.cls}">${s.label}</span></td>
+    ${window.PUBLIC_MODE ? "" : `<td><span class="badge ${f.cls}">${f.label}</span>${c.feeAmount?`<div class="small muted">${money(c.feeAmount)}</div>`:""}</td>`}
+    <td class="small">${esc(s.action)}${c.notes?`<div class="muted">${esc(c.notes)}</div>`:""}</td>
+    <td><button class="btn sm" onclick="editCert('${esc(c.id)}')">編輯</button></td></tr>`).join("");
+  document.getElementById("certTable").innerHTML = head + `<tbody>${body || `<tr><td colspan="12" class="empty">沒有符合條件的證書</td></tr>`}</tbody>`;
+  document.getElementById("certFoot").textContent = `顯示 ${list.length} / ${S.certs.length} 張。展延判斷：到期前 ${S.settings.renew} 天內列為「需申請展延」，可於設定調整。`;
+}
+function initCertFiltersKeep(){
+  const a=document.getElementById("certStatus").value, b=document.getElementById("certCat").value;
+  initCertFilters(); document.getElementById("certStatus").value=a; document.getElementById("certCat").value=b;
+}
+function sortCerts(k){ certSort = {key:k, dir: certSort.key===k ? -certSort.dir : 1}; renderCerts(); }
+
+let editingId = null;
+function editCert(id){
+  editingId = id || null;
+  const preset = agencyFilter === "NCC"
+    ? {category:"NCC 型式認證", issuer:"國家通訊傳播委員會", agency:"NCC"}
+    : {category:"商品驗證登錄", issuer:"經濟部標準檢驗局", agency:"auto"};
+  const c = id ? S.certs.find(x=>x.id===id) : {certNo:"",product:"",model:"",hs:"",issueDate:"",expiryDate:"",feeNotice:"",feeAmount:"",notes:"",...preset};
+  document.getElementById("certModalTitle").textContent = id ? `編輯證書 ${c.certNo}` : "新增證書";
+  document.getElementById("f_feeNotice").innerHTML = `<option value="">（無）</option>` + S.notices.map(n=>`<option value="${n.no}">${n.no}｜${n.type}</option>`).join("");
+  ["certNo","category","product","model","hs","issuer","issueDate","expiryDate","feeNotice","feeAmount","notes"].forEach(k=>document.getElementById("f_"+k).value = c[k] ?? "");
+  document.getElementById("f_agency").value = c.agency || "auto";
+  const extra = c.extra && Object.keys(c.extra).length ? c.extra : null;
+  document.getElementById("certDeleteBtn").style.display = id ? "" : "none";
+  document.getElementById("certDeleteBtn").onclick = () => { if(confirm(`確定刪除 ${c.certNo}？`)){ S.certs=S.certs.filter(x=>x.id!==id); save(); closeModal("certModal"); renderAll(); toast("已刪除"); } };
+  let ex = document.getElementById("extraBox"); if (ex) ex.remove();
+  if (extra){
+    ex = document.createElement("div"); ex.id="extraBox"; ex.style.marginTop="14px";
+    ex.innerHTML = `<div class="small muted" style="margin-bottom:6px">匯入的原始欄位</div><div class="kv">${Object.entries(extra).map(([k,v])=>`<b>${esc(k)}</b><span>${esc(v)}</span>`).join("")}</div>`;
+    document.querySelector("#certModal .form").after(ex);
+  }
+  openModal("certModal");
+}
+function saveCert(){
+  const g = k => document.getElementById("f_"+k).value.trim();
+  if (!g("certNo")) return toast("請填寫證書號碼");
+  const data = {certNo:g("certNo"),category:g("category"),product:g("product"),model:g("model"),hs:g("hs"),issuer:g("issuer"),
+    issueDate:g("issueDate"),expiryDate:g("expiryDate"),feeNotice:g("feeNotice"),feeAmount:Number(g("feeAmount"))||0,notes:g("notes"),agency:g("agency")};
+  if (editingId){ Object.assign(S.certs.find(x=>x.id===editingId), data); }
+  else {
+    if (S.certs.some(x=>norm(x.certNo)===norm(data.certNo))) return toast("證書號碼已存在");
+    S.certs.push({id:data.certNo, source:"手動新增", extra:{}, ...data});
+  }
+  save(); closeModal("certModal"); renderAll(); toast("已儲存");
+}
+
+/* ---------- 年費 ---------- */
+function renderFees(){
+  document.getElementById("notices").innerHTML = S.notices.map(n=>{
+    const ns = noticeStatus(n);
+    const certs = S.certs.filter(c=>c.feeNotice===n.no);
+    const sum = certs.reduce((a,c)=>a+(Number(c.feeAmount)||0),0);
+    return `<div class="card notice ${ns.key}">
+      <div style="display:flex;align-items:center;gap:10px"><span class="badge ${ns.cls}">${ns.label}</span><b>${esc(n.type)}｜${n.feeYear} 年度年費</b></div>
+      <div class="amt">${money(n.total)}</div>
+      <div class="kv">
+        <b>通知單編號</b><span class="mono">${n.no}</span>
+        <b>通知日期</b><span>${n.noticeDate}（民國 ${toROC(n.noticeDate)}）</span>
+        <b>繳費期限</b><span><b style="color:${ns.key==="paid"?"var(--ok)":ns.key==="overdue"?"var(--bad)":"var(--warn)"}">${n.deadline}（民國 ${toROC(n.deadline)}）</b>${ns.key==="unpaid"?`　剩 ${ns.days} 天`:ns.key==="overdue"?`　已逾期 ${-daysTo(n.deadline)} 天`:""}</span>
+        <b>證書張數</b><span>${n.count} 張${certs.length!==n.count?` <span class="badge b-warn">清單中有 ${certs.length} 張</span>`:""}${sum!==n.total?` <span class="badge b-warn">明細加總 ${money(sum)}</span>`:" ✓ 明細加總相符"}</span>
+        <b>匯款帳號</b><span>${esc(n.bank)}<br><span class="mono">${n.account}</span>　戶名：經濟部標準檢驗局</span>
+        <b>承辦人</b><span>${esc(n.contact)}</span>
+        ${(o => o ? `<b>負責單位</b><span><b>${esc(o.owner)}</b>（需通知 ${esc(o.contact)}）　${(S.feeNotify||{})[o.p] ? `<span class="badge b-ok">已通知 ${esc(S.feeNotify[o.p].date)}</span>` : `<span class="badge b-warn">尚未通知</span>`}</span>` : "")(noticeOwner(n))}
+        ${n.note?`<b>注意</b><span style="color:var(--bad)">${esc(n.note)}</span>`:""}
+        ${n.paid?`<b>繳費日期</b><span>${esc(n.paidDate||"—")}　${n.paidRef?"收據/交易序號："+esc(n.paidRef):""}</span>`:""}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        ${n.paid?`<button class="btn sm" onclick="markPaid('${n.no}',false)">改回待繳</button>`:`<button class="btn sm primary" onclick="markPaid('${n.no}',true)">✓ 標記為已繳</button>`}
+        <button class="btn sm" onclick="filterFee('${n.no}')">查看證書</button>
+      </div></div>`;
+  }).join("");
+  const groups = feeGroups();
+  document.getElementById("feeGroups").innerHTML = groups.map(({p, info, certs})=>{
+    const unpaidNotices = [...new Set(certs.map(c=>c.feeNotice).filter(Boolean))].map(no=>S.notices.find(n=>n.no===no)).filter(n=>n && !n.paid);
+    const due = certs.filter(c=>unpaidNotices.some(n=>n.no===c.feeNotice)).reduce((a,c)=>a+(Number(c.feeAmount)||0),0);
+    const nf = (S.feeNotify||{})[p];
+    const contactBox = info.contact ? `<div class="callout ${nf?"":"warn"}" style="margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">此類證書屬 <b>${esc(info.owner)}</b>，年費需通知 <b>${esc(info.contact)}</b> 處理。
+          ${nf ? `<span class="badge b-ok">已於 ${esc(nf.date)} 通知</span>` : `<span class="badge b-warn">尚未通知</span>`}</div>
+        <button class="btn sm" onclick="copyFeeNotice('${p}')">📋 複製通知內容</button>
+        ${nf ? `<button class="btn sm" onclick="markNotified('${p}',false)">改回未通知</button>` : `<button class="btn sm primary" onclick="markNotified('${p}',true)">✓ 標記已通知</button>`}
+      </div>` : "";
+    return `<div class="card" style="margin-top:16px">
+      <h3><span class="badge b-bsmi" style="font-size:14px">${esc(p)} 開頭</span> ${esc(info.name)}
+        <span class="right">${certs.length} 張${due?`・待繳 <b style="color:var(--warn)">${money(due)}</b>`:""}${info.owner?`・負責：${esc(info.owner)}`:""}</span></h3>
+      ${contactBox}
+      <div class="table-wrap" style="max-height:none"><table>
+        <thead><tr><th>證書號碼</th><th>品名</th><th>型式</th><th>通知單</th><th>金額</th><th>證書有效期限</th><th>證書狀態</th><th>年費狀態</th></tr></thead><tbody>
+        ${certs.map(c=>{ const s=certStatus(c), f=feeStatus(c); return `<tr><td class="mono"><b>${esc(c.certNo)}</b></td><td>${esc(c.product)}</td><td class="small">${esc(c.model)}</td>
+          <td class="mono">${esc(c.feeNotice)||"—"}</td><td>${c.feeAmount?money(c.feeAmount):"—"}</td><td>${esc(c.expiryDate)}</td>
+          <td><span class="badge ${s.cls}">${s.label}</span></td><td><span class="badge ${f.cls}">${f.label}</span></td></tr>`; }).join("")}
+      </tbody></table></div></div>`;
+  }).join("");
+}
+
+const FEE_GROUPS = {
+  CI: {name:"商品驗證登錄", owner:"", contact:""},
+  V:  {name:"自願性產品驗證", owner:"", contact:""},
+};
+const certPrefix = c => { const no = norm(c.certNo); return no.startsWith("CI") ? "CI" : (no.match(/^[A-Z]+/) || ["其他"])[0]; };
+const feeGroupInfo = p => FEE_GROUPS[p] || {name:"其他", owner:"", contact:""};
+function feeGroups(){
+  const list = S.certs.filter(c => c.feeNotice || feeStatus(c).label.startsWith("未列入"));
+  const by = {};
+  list.forEach(c => (by[certPrefix(c)] = by[certPrefix(c)] || []).push(c));
+  const order = Object.keys(FEE_GROUPS);
+  return Object.keys(by).sort((a,b)=>((order.indexOf(a)+1||99)-(order.indexOf(b)+1||99)) || a.localeCompare(b))
+    .map(p => ({p, info:feeGroupInfo(p), certs: by[p].sort((a,b)=>String(a.feeNotice).localeCompare(String(b.feeNotice)) || a.certNo.localeCompare(b.certNo))}));
+}
+function noticeOwner(n){
+  const ps = [...new Set(S.certs.filter(c=>c.feeNotice===n.no).map(certPrefix))];
+  return ps.map(p=>({p, ...feeGroupInfo(p)})).find(g=>g.contact) || null;
+}
+function feeNoticeText(p){
+  const info = feeGroupInfo(p);
+  const certs = feeGroups().find(g=>g.p===p)?.certs || [];
+  const notices = [...new Set(certs.map(c=>c.feeNotice).filter(Boolean))].map(no=>S.notices.find(n=>n.no===no)).filter(Boolean);
+  const first = info.contact.split(" ")[0];
+  return [
+    `Hi ${first},`, "",
+    `BSMI 已寄來 ${info.owner} 相關證書的年費繳納通知，請協助安排繳費：`, "",
+    ...notices.flatMap(n=>[
+      `【${n.type}｜${n.feeYear} 年度年費】`,
+      `- 通知單編號：${n.no}`,
+      `- 應繳金額：${money(n.total)}（${n.count} 張證書，須全額繳納）`,
+      `- 繳費期限：${n.deadline}（民國 ${toROC(n.deadline)}）`,
+      `- 匯款：${n.bank}，帳號 ${n.account}，戶名：經濟部標準檢驗局`,
+      `- BSMI 承辦人：${n.contact}`, ""]),
+    "證書明細：",
+    ...certs.map((c,i)=>`${i+1}. ${c.certNo}｜${c.product}｜型式 ${c.model}｜${c.feeAmount?money(c.feeAmount):"—"}｜有效至 ${c.expiryDate}`), "",
+    "提醒：逾期未繳或未辦理註銷，依商品檢驗法第 42 條第 7 款將廢止證書。若有不再使用的證書，請於繳費前告知，以便先函請 BSMI 註銷並取得新繳費單。", "",
+    "繳費後請提供繳費日期與收據，謝謝！",
+  ].join("\n");
+}
+function copyFeeNotice(p){
+  const text = feeNoticeText(p);
+  const done = () => toast(`已複製給 ${feeGroupInfo(p).contact} 的通知內容，可貼到 Email / Teams`);
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done, () => prompt("請複製以下內容：", text));
+  else prompt("請複製以下內容：", text);
+}
+function markNotified(p, on){
+  S.feeNotify = S.feeNotify || {};
+  if (on){
+    const date = prompt(`通知 ${feeGroupInfo(p).contact} 的日期（YYYY-MM-DD）`, iso(TODAY)); if (date === null) return;
+    S.feeNotify[p] = {date};
+  } else delete S.feeNotify[p];
+  save(); renderAll(); toast(on ? "已標記為已通知" : "已改回未通知");
+}
+function markPaid(no, paid){
+  const n = S.notices.find(x=>x.no===no);
+  if (paid){
+    const date = prompt("繳費日期（YYYY-MM-DD）", iso(TODAY)); if (date===null) return;
+    const ref = prompt("收據號碼 / 交易序號（可留空）", "") ?? "";
+    Object.assign(n, {paid:true, paidDate:date, paidRef:ref});
+  } else Object.assign(n, {paid:false, paidDate:"", paidRef:""});
+  save(); renderAll(); toast(paid?"已標記為已繳":"已改回待繳");
+}
+function filterFee(no){ gotoTab("certs"); document.getElementById("certSearch").value = no; renderCerts(); }
+
+/* ---------- 進口許可 ---------- */
+let permitSort = {col:"", dir:1};
+function permitKey(r){ const h = S.permits.headers.find(h=>/許可|證號|號碼|No/i.test(h)) || S.permits.headers[0]; return r[h]; }
+function renderPermits(){
+  const P = S.permits, has = P.rows.length > 0;
+  renderTariff();
+  renderParts();
+  document.getElementById("permitEmpty").style.display = has ? "none" : "";
+  document.getElementById("permitBody").style.display = has ? "" : "none";
+  if (!has) return;
+  const opt = (sel, v) => `<option value="">（不使用）</option>` + P.headers.map(h=>`<option ${h===v?"selected":""}>${esc(h)}</option>`).join("");
+  document.getElementById("permitExpCol").innerHTML = opt("exp", P.expCol);
+  document.getElementById("permitDateCol").innerHTML = opt("date", P.dateCol);
+  const ps = document.getElementById("permitStatus"), pv = ps.value;
+  ps.innerHTML = `<option value="">全部狀態</option><option value="expired">已過期</option><option value="soon">即將到期</option><option value="valid">有效</option><option value="unknown">無日期</option>`; ps.value = pv;
+  if (P.groupCol === undefined) P.groupCol = guessPermitGroupCol(P.headers);
+  document.getElementById("permitGroupCol").innerHTML = `<option value="">（不分類）</option>` + P.headers.map(h=>`<option ${h===P.groupCol?"selected":""}>${esc(h)}</option>`).join("");
+  const G = P.groupCol, gv = r => String(r[G] ?? "").trim() || "（未填）";
+  const q = document.getElementById("permitSearch").value.trim().toLowerCase();
+  const cols = P.headers;
+  const passCols = r => Object.entries(permitColFilters).every(([h,f]) => !f.v || (f.exact ? String(r[h] ?? "").trim() === f.v : String(r[h] ?? "").toLowerCase().includes(f.v.toLowerCase())));
+  const base = P.rows.map(r=>({r, s:permitStatus(r)})).filter(({r,s}) => (!q || Object.values(r).join(" ").toLowerCase().includes(q)) && (!pv || s.key===pv) && passCols(r));
+
+  const counts = {}; if (G) base.forEach(({r}) => counts[gv(r)] = (counts[gv(r)] || 0) + 1);
+  const allGroups = G ? [...new Set(P.rows.map(gv))] : [];
+  if (permitGroupVal && !allGroups.includes(permitGroupVal)) permitGroupVal = "";
+  document.getElementById("permitGroupTabs").innerHTML = G ? [["", "全部", base.length], ...allGroups.map(g => [g, g, counts[g] || 0])]
+    .map(([v, t, n]) => `<button class="${permitGroupVal===v?"active":""}" onclick="setPermitGroup(${esc(JSON.stringify(v))})">${v ? `<span class="badge ${projStatusCls(v)}" style="padding:1px 7px">${esc(t)}</span>` : t} <span class="muted">${n}</span></button>`).join("") : `<span class="small muted">選擇分類依據（例如「專案狀態」）即可分組與篩選</span>`;
+
+  let rows = base.filter(({r}) => !G || !permitGroupVal || gv(r) === permitGroupVal);
+  if (permitSort.col){
+    const c = permitSort.col;
+    rows.sort((a,b)=>{ const da=parseDate(a.r[c]), db=parseDate(b.r[c]); const va=da?+da:String(a.r[c]??""), vb=db?+db:String(b.r[c]??""); return (va>vb?1:va<vb?-1:0)*permitSort.dir; });
+  }
+
+  const ae = document.activeElement, focusId = ae?.id?.startsWith("pf_") ? ae.id : null, caret = focusId && ae.selectionStart;
+  const filterCell = (h, i) => {
+    const vals = [...new Set(P.rows.map(r => String(r[h] ?? "").trim()).filter(Boolean))];
+    const f = permitColFilters[h] || {};
+    if (vals.length && vals.length <= 40)
+      return `<th style="top:37px;background:#fff;cursor:default"><select id="pf_${i}" data-col="${esc(h)}" data-exact="1" style="width:100%;min-width:90px;padding:4px"><option value="">全部</option>${vals.sort().map(v=>`<option ${f.v===v?"selected":""}>${esc(v)}</option>`).join("")}</select></th>`;
+    return `<th style="top:37px;background:#fff;cursor:default"><input type="text" id="pf_${i}" data-col="${esc(h)}" value="${esc(f.v||"")}" placeholder="篩選…" style="width:100%;min-width:80px;padding:4px"></th>`;
+  };
+  const hsCol = guessCol(cols, HS_COL_RE), cooCol = guessCol(cols, COO_COL_RE);
+  const N = cols.length + (P.expCol ? 1 : 0) + (hsCol ? 1 : 0);
+  const impCell = r => { const t = tariffOf(r[hsCol]); if (!t) return `<td><span class="muted small">—</span></td>`;
+    const need = t.imp && cooCol && isCN(r[cooCol]);
+    return `<td>${impBadge(t.imp)}${need?`<div><span class="badge b-bad">大陸製・需確認許可</span></div>`:""}</td>`; };
+  const rowHtml = ({r,s}) => `<tr>${P.expCol?`<td><span class="badge ${s.cls}">${s.label}</span></td>`:""}${hsCol?impCell(r):""}${cols.map(h=>`<td>${h===G?`<span class="badge ${projStatusCls(gv(r))}">${esc(r[h])||"—"}</span>`:esc(r[h])}</td>`).join("")}</tr>`;
+  let body;
+  if (G && document.getElementById("permitGrouped").checked && !permitGroupVal){
+    const order = allGroups.filter(g => rows.some(x => gv(x.r) === g));
+    body = order.map(g => {
+      const list = rows.filter(x => gv(x.r) === g), closed = permitCollapsed.has(g);
+      return `<tr style="cursor:pointer" onclick="togglePermitGroup(${esc(JSON.stringify(g))})"><td colspan="${N}" style="background:#f3f5fa;font-weight:600">${closed?"▸":"▾"} <span class="badge ${projStatusCls(g)}">${esc(g)}</span> <span class="muted">${list.length} 筆</span></td></tr>` +
+        (closed ? "" : list.map(rowHtml).join(""));
+    }).join("");
+  } else body = rows.map(rowHtml).join("");
+  document.getElementById("permitTable").innerHTML =
+    `<thead><tr>${P.expCol?"<th>狀態</th>":""}${hsCol?"<th>輸入規定</th>":""}${cols.map(h=>`<th onclick="sortPermits('${esc(h).replace(/'/g,"\\'")}')">${esc(h)}${permitSort.col===h?(permitSort.dir>0?" ▲":" ▼"):""}</th>`).join("")}</tr>` +
+    `<tr>${P.expCol?`<th style="top:37px;background:#fff"></th>`:""}${hsCol?`<th style="top:37px;background:#fff"></th>`:""}${cols.map(filterCell).join("")}</tr></thead><tbody>` +
+    (body || `<tr><td colspan="${N}" class="empty">沒有符合條件的紀錄</td></tr>`) + "</tbody>";
+  if (focusId){ const el = document.getElementById(focusId); if (el){ el.focus(); if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); } }
+
+  const st = P.rows.map(permitStatus);
+  const activeFilters = Object.values(permitColFilters).filter(f=>f.v).length + (permitGroupVal?1:0) + (q?1:0) + (pv?1:0);
+  document.getElementById("permitFoot").textContent = `顯示 ${rows.length} / ${P.rows.length} 筆${activeFilters?`（${activeFilters} 個篩選條件）`:""} · 來源：${P.fileName||"貼上"} · 匯入時間 ${P.importedAt}` +
+    (P.expCol ? ` · 已過期 ${st.filter(s=>s.key==="expired").length} 筆、即將到期 ${st.filter(s=>s.key==="soon").length} 筆、有效 ${st.filter(s=>s.key==="valid").length} 筆` : " · 請選擇「到期欄位」以判斷是否過期");
+}
+function sortPermits(c){ permitSort = {col:c, dir: permitSort.col===c ? -permitSort.dir : 1}; renderPermits(); }
+let permitGroupVal = "", permitColFilters = {}, permitCollapsed = new Set();
+/* 海關稅則 7318（使用者提供之稅則表截圖） */
+const TARIFF_7318 = [
+  ["73181100000","鋼鐵製車用螺釘","Coach screws, of iron or steel","MW0"],
+  ["73181200009","其他木用螺釘，鋼鐵製","Other wood screws, of iron or steel","MW0"],
+  ["73181300008","鋼鐵製螺旋鉤及螺旋圈","Screw hooks and screw rings, of iron or steel","MW0"],
+  ["73181400007","自攻螺釘，鋼鐵製","Self-tapping screws, of iron or steel","MW0"],
+  ["73181510004","鋼鐵製鐵軌用螺釘及螺栓，有否附螺帽及墊圈均在內","Screws and bolts for rail, whether or not with their nuts or washers, of iron or steel","MW0"],
+  ["73181590007","其他鋼鐵製螺釘及螺栓，有否附螺帽及墊圈均在內","Other screws and bolts, whether or not with their nuts or washers, of iron or steel","MP1"],
+  ["73181600005","鋼鐵螺絲帽","Nuts, of iron or steel","MW0"],
+  ["73181900002","其他鋼鐵螺紋製品","Other threaded articles, of iron or steel",""],
+  ["73182100008","鋼鐵製彈簧墊圈及其他鎖緊墊圈","Spring washers and other lock washers, of iron or steel","MW0"],
+  ["73182200007","鋼鐵製其他墊圈","Other washers, of iron or steel","MW0"],
+  ["73182300006","鉚釘，鋼鐵製","Rivets, of iron or steel","MW0"],
+  ["73182400005","橫梢及開口梢，鋼鐵製","Cotters and cotter pins, of iron or steel","MP1"],
+  ["73182900000","其他鋼鐵製無螺紋製品","Other non-threaded articles, of iron or steel","MW0"],
+].map(([code, zh, en, imp]) => ({code, zh, en, imp, duty1:"5%", duty2:"0% (PA,GT,NI,SV,HN,NZ,SG)", duty3:"5%", qtyUnit:"", wtUnit:"KGM", levy:"", exp:""}));
+const HS_COL_RE = /^hs$|hs.?code|稅則|貨品分類號列|ccc/i, COO_COL_RE = /^coo$|產地|原產|country of origin|生產國/i;
+const fmtTwHS = c => c.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d)$/, "$1.$2.$3.$4-$5");
+const tariffOf = hsVal => { const d = String(hsVal ?? "").replace(/\D/g, ""); return d.length >= 8 ? TARIFF_7318.find(t => t.code.startsWith(d.slice(0, 8))) : null; };
+const isCN = v => /^(CN|CHN|CHINA|中國|大陸)/i.test(String(v ?? "").trim());
+const impBadge = imp => imp ? `<span class="badge ${imp==="MW0"?"b-bad":"b-warn"}">${imp}</span>` : `<span class="muted">—</span>`;
+function renderTariff(){
+  const P = S.permits, hsCol = guessCol(P.headers || [], HS_COL_RE), cooCol = guessCol(P.headers || [], COO_COL_RE);
+  const stat = t => {
+    if (!hsCol) return null;
+    const rows = P.rows.filter(r => tariffOf(r[hsCol]) === t);
+    return {n: rows.length, qty: P.qtyCol ? rows.reduce((a,r)=>a+qtyNum(r[P.qtyCol]),0) : null, cn: cooCol ? rows.filter(r=>isCN(r[cooCol])).length : null};
+  };
+  document.getElementById("tariffInfo").textContent = hsCol ? `比對進口紀錄欄位「${hsCol}」${cooCol?`，產地欄位「${cooCol}」`:""}` : (P.rows.length ? "進口紀錄中找不到 HS 欄位" : "匯入進口紀錄後會自動比對筆數");
+  document.getElementById("tariffTable").innerHTML = `<thead><tr><th>貨品分類號列</th><th>中文貨名</th><th>英文貨名</th><th>第一欄稅率</th><th>第二欄稅率</th><th>第三欄稅率</th><th>統計數量單位</th><th>統計重量單位</th><th>稽徵規定</th><th>輸入規定</th><th>輸出規定</th>${hsCol?"<th>進口紀錄</th>":""}</tr></thead><tbody>` +
+    TARIFF_7318.map(t => { const s = stat(t);
+      return `<tr style="cursor:${hsCol?"pointer":"default"}" ${hsCol?`onclick="filterByTariff('${t.code.slice(0,8)}')"`:""}><td class="mono"><b>${fmtTwHS(t.code)}</b></td><td>${esc(t.zh)}</td><td class="small">${esc(t.en)}</td>
+        <td>${t.duty1}</td><td class="small">${t.duty2}</td><td>${t.duty3}</td><td>${t.qtyUnit||"—"}</td><td>${t.wtUnit}</td><td>${t.levy||"—"}</td><td>${impBadge(t.imp)}</td><td>${t.exp||"—"}</td>
+        ${s ? `<td>${s.n ? `<b>${s.n}</b> 筆${s.qty!=null?`・${s.qty.toLocaleString()} 件`:""}${s.cn?`<div><span class="badge ${t.imp?"b-bad":"b-gray"}">CN ${s.cn} 筆</span></div>`:""}` : `<span class="muted">0</span>`}</td>` : ""}</tr>`; }).join("") + "</tbody>";
+}
+function filterByTariff(code8){
+  const hsCol = guessCol(S.permits.headers || [], HS_COL_RE); if (!hsCol) return;
+  permitColFilters[hsCol] = {v: code8, exact: false}; permitGroupVal = "";
+  renderPermits(); document.getElementById("permitTable").scrollIntoView({behavior:"smooth"});
+  toast(`已篩選 HS ${code8}`);
+}
+function guessPermitGroupCol(headers){
+  return guessCol(headers, /專案狀態|項目狀態|project\s*status/i) || guessCol(headers, /狀態|status|進度|stage/i) || "";
+}
+function projStatusCls(v){
+  const s = String(v);
+  if (/取消|退件|駁回|不通過|cancel|reject|fail/i.test(s)) return "b-bad";
+  if (/完成|結案|已核准|核准|已取得|已發證|done|closed|complete|approved/i.test(s)) return "b-ok";
+  if (/暫停|待|hold|wait/i.test(s)) return "b-warn";
+  if (/進行|處理|申請中|審核|送件|pending|progress|open/i.test(s)) return "b-info";
+  return "b-gray";
+}
+function setPermitGroup(v){ permitGroupVal = v; renderPermits(); }
+function togglePermitGroup(g){ permitCollapsed.has(g) ? permitCollapsed.delete(g) : permitCollapsed.add(g); renderPermits(); }
+function clearPermitFilters(){
+  permitGroupVal = ""; permitColFilters = {};
+  document.getElementById("permitSearch").value = ""; document.getElementById("permitStatus").value = "";
+  renderPermits();
+}
+
+/* ---------- 料號查詢 ---------- */
+const PART_RE = /料號|料号|品號|part|p\/n|^pn$|material|物料|零件/i;
+const QTY_RE = /數量|数量|qty|quantity|申請量|核准量/i;
+const UNIT_RE = /單位|单位|unit|uom/i;
+const qtyNum = v => { const m = String(v ?? "").replace(/[,\s]/g,"").match(/-?\d+(\.\d+)?/); return m ? Number(m[0]) : 0; };
+const fmtQty = map => { const e = Object.entries(map).filter(([,v])=>v); return e.length ? e.map(([u,v])=>`${v.toLocaleString("zh-TW")}${u?" "+esc(u):""}`).join(" / ") : "0"; };
+const addQty = (map, unit, q) => { map[unit] = (map[unit]||0) + q; };
+
+function partGroups(rows){
+  const P = S.permits, g = {};
+  rows.forEach(r=>{
+    const part = String(r[P.partCol]||"").trim(); if (!part) return;
+    const k = norm(part), s = permitStatus(r), unit = P.unitCol ? String(r[P.unitCol]||"").trim() : "", q = P.qtyCol ? qtyNum(r[P.qtyCol]) : 0;
+    const x = g[k] || (g[k] = {part, rows:[], total:{}, valid:{}, expired:{}, lastDate:null, lastExp:null});
+    x.rows.push({r,s}); addQty(x.total, unit, q);
+    if (s.key==="expired") addQty(x.expired, unit, q); else if (s.key==="valid"||s.key==="soon") addQty(x.valid, unit, q);
+    const d = P.dateCol && parseDate(r[P.dateCol]); if (d && (!x.lastDate || d > x.lastDate)) x.lastDate = d;
+    const e = P.expCol && parseDate(r[P.expCol]); if (e && (!x.lastExp || e > x.lastExp)) x.lastExp = e;
+  });
+  return g;
+}
+function renderParts(){
+  const P = S.permits, card = document.getElementById("partCard");
+  card.style.display = P.rows.length ? "" : "none";
+  if (!P.rows.length) return;
+  const opt = v => `<option value="">（未選擇）</option>` + P.headers.map(h=>`<option ${h===v?"selected":""}>${esc(h)}</option>`).join("");
+  document.getElementById("partCol").innerHTML = opt(P.partCol);
+  document.getElementById("qtyCol").innerHTML = opt(P.qtyCol);
+  document.getElementById("unitCol").innerHTML = opt(P.unitCol);
+  document.getElementById("partColsInfo").textContent = P.expCol ? `有效／過期依「${P.expCol}」判斷` : "未選擇到期欄位，無法區分有效／過期";
+  const out = document.getElementById("partResult");
+  if (!P.partCol){ out.innerHTML = `<div class="callout warn">找不到料號欄位，請在上方選擇「料號欄位」。</div>`; document.getElementById("partSumTable").innerHTML=""; return; }
+  if (!P.qtyCol) out.innerHTML = `<div class="callout warn">請選擇「數量欄位」以計算申請數量。</div>`;
+
+  const groups = partGroups(P.rows);
+  document.getElementById("partList").innerHTML = Object.values(groups).slice(0,2000).map(x=>`<option value="${esc(x.part)}">`).join("");
+
+  const tokens = document.getElementById("partSearch").value.split(/[,，;；\s]+/).map(norm).filter(Boolean);
+  if (!tokens.length){
+    if (P.qtyCol) out.innerHTML = `<div class="muted small">共 ${Object.keys(groups).length.toLocaleString()} 個料號、${P.rows.length.toLocaleString()} 筆申請紀錄。輸入料號即可查看申請次數與數量。</div>`;
+  } else {
+    out.innerHTML = tokens.map(t=>{
+      const hits = Object.entries(groups).filter(([k])=>k.includes(t)).sort((a,b)=>(a[0]===t?-1:b[0]===t?1:a[0].localeCompare(b[0])));
+      if (!hits.length) return `<div class="callout warn" style="margin-bottom:10px">查無料號「${esc(t)}」的進口許可申請紀錄。</div>`;
+      return hits.slice(0,20).map(([k,x])=>partCard(x, k===t)).join("") + (hits.length>20?`<div class="small muted">「${esc(t)}」另有 ${hits.length-20} 個相似料號未顯示，請輸入更完整的料號。</div>`:"");
+    }).join("");
+  }
+
+  const sq = norm(document.getElementById("partSumSearch").value);
+  const list = Object.entries(groups).filter(([k])=>!sq || k.includes(sq)).sort((a,b)=>b[1].rows.length-a[1].rows.length);
+  document.getElementById("partSumTable").innerHTML = `<thead><tr><th>料號</th><th>申請次數</th><th>申請總數量</th><th>有效許可數量</th><th>已過期數量</th><th>最近申請日</th><th>最晚到期日</th></tr></thead><tbody>` +
+    list.slice(0,500).map(([k,x])=>`<tr style="cursor:pointer" onclick="lookupPart('${esc(x.part).replace(/'/g,"\\'")}')"><td class="mono"><b>${esc(x.part)}</b></td><td>${x.rows.length}</td><td>${fmtQty(x.total)}</td><td style="color:var(--ok)">${P.expCol?fmtQty(x.valid):"—"}</td><td style="color:var(--bad)">${P.expCol?fmtQty(x.expired):"—"}</td><td>${iso(x.lastDate)}</td><td>${iso(x.lastExp)}</td></tr>`).join("") +
+    (list.length>500?`<tr><td colspan="7" class="muted small">僅顯示前 500 筆，請用篩選縮小範圍</td></tr>`:"") + "</tbody>";
+}
+function partCard(x, exact){
+  const P = S.permits;
+  const showCols = [P.dateCol, P.expCol, P.qtyCol, P.unitCol].filter(Boolean);
+  const keyCol = P.headers.find(h=>/許可|證號|證書|號碼|no\.?$/i.test(h) && h!==P.partCol && !showCols.includes(h));
+  const otherCols = P.headers.filter(h=>h!==P.partCol && h!==keyCol && !showCols.includes(h));
+  const cols = [keyCol, ...showCols, ...otherCols].filter(Boolean);
+  const rows = [...x.rows].sort((a,b)=>(parseDate(b.r[P.dateCol])||0)-(parseDate(a.r[P.dateCol])||0));
+  return `<div class="notice" style="margin-bottom:12px;${exact?"border-left:5px solid var(--info)":""}">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b class="mono" style="font-size:16px">${esc(x.part)}</b>${exact?`<span class="badge b-info">完全符合</span>`:`<span class="badge b-gray">部分符合</span>`}</div>
+    <div class="grid kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+      <div class="card kpi info" style="padding:12px"><div class="label">申請次數</div><div class="value" style="font-size:22px">${x.rows.length}</div></div>
+      <div class="card kpi info" style="padding:12px"><div class="label">申請總數量</div><div class="value" style="font-size:22px">${fmtQty(x.total)}</div></div>
+      <div class="card kpi ok" style="padding:12px"><div class="label">有效許可數量</div><div class="value" style="font-size:22px">${P.expCol?fmtQty(x.valid):"—"}</div></div>
+      <div class="card kpi bad" style="padding:12px"><div class="label">已過期數量</div><div class="value" style="font-size:22px">${P.expCol?fmtQty(x.expired):"—"}</div></div>
+      <div class="card kpi" style="padding:12px"><div class="label">最近申請 / 最晚到期</div><div class="value" style="font-size:15px">${iso(x.lastDate)||"—"}<br>${iso(x.lastExp)||"—"}</div></div>
+    </div>
+    <div class="table-wrap" style="max-height:320px"><table><thead><tr><th>狀態</th>${cols.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>
+      ${rows.map(({r,s})=>`<tr><td><span class="badge ${s.cls}">${s.label}</span></td>${cols.map(h=>`<td${h===P.qtyCol?' style="font-weight:600"':""}>${esc(r[h])}</td>`).join("")}</tr>`).join("")}
+    </tbody></table></div></div>`;
+}
+function lookupPart(p){ document.getElementById("partSearch").value = p; renderParts(); document.getElementById("partCard").scrollIntoView({behavior:"smooth"}); }
+function exportPartSummary(){
+  const P = S.permits, g = partGroups(P.rows);
+  const head = ["料號","申請次數","申請總數量","有效許可數量","已過期數量","最近申請日","最晚到期日"];
+  const lines = Object.values(g).map(x=>[x.part,x.rows.length,fmtQty(x.total),fmtQty(x.valid),fmtQty(x.expired),iso(x.lastDate),iso(x.lastExp)].map(csvCell).join(","));
+  download(`import_lic_part_summary_${iso(TODAY)}.csv`, "\uFEFF" + [head.map(csvCell).join(","), ...lines].join("\r\n"), "text/csv;charset=utf-8");
+}
+function clearPermits(){ if(!confirm("確定清除所有進口許可紀錄？")) return; S.permits={headers:[],rows:[],expCol:"",dateCol:"",importedAt:"",fileName:""}; save(); renderAll(); }
+
+/* ---------- 逐批商檢 ---------- */
+const fileLinks = files => (files||[]).map(f=>`<a class="btn sm" style="margin:2px 4px 2px 0" href="${encodeURI(f.path)}" target="_blank" title="${esc(f.path)}">📎 ${esc(f.name)}</a>`).join("");
+const fileLinksCompact = files => {
+  const main = (files||[]).filter(f => /合格證|先行放行|授權書/.test(f.name)), rest = (files||[]).filter(f => !main.includes(f));
+  return fileLinks(main) + (rest.length ? `<details style="margin-top:2px"><summary class="small muted" style="cursor:pointer">更多附件（${rest.length}）</summary>${fileLinks(rest)}</details>` : "");
+};
+const INSP_STATUS_CLS = {"合格":"b-ok","待確認":"b-warn","不合格":"b-bad"};
+const INSP_FIELDS = [
+  ["status","狀態","select:合格,待確認,不合格"],["certNo","合格證號"],["issueDate","發證日期","date"],["branch","檢驗分局"],
+  ["declNo","進口報單號碼"],["item","報單項次"],["partNo","Tesla 料號"],["desc","料名"],
+  ["spec","規格"],["model","型式"],["typeCert","型式認可證號"],["qty","數量","number"],
+  ["unit","單位"],["netWeight","淨重"],["maker","製造廠"],["origin","生產國別"],
+  ["port","起運口岸"],["batch","製造批號"],["appNo","申請書號碼"],["review","核判"],
+  ["broker","報關／報驗"],["notes","備註","full"],
+];
+const TEST_REPORTS = [].map(([model, report, car, size, retest, kb, file, orig]) => ({model, report, car, size, retest, kb, file, orig, path:file}));
+const CAR_NAME = {MS:"Model S", MX:"Model X", M3:"Model 3", M3H:"Model 3 Highland", MY:"Model Y"};
+const modelKey = s => (String(s || "").match(/\d{7}/) || [""])[0];
+const certsForReport = tr => S.certs.filter(c => c.category === "型式認可" && modelKey(c.model) === modelKey(tr.model))
+  .sort((a,b) => String(b.expiryDate).localeCompare(String(a.expiryDate)));
+const reportsForCert = c => TEST_REPORTS.filter(tr => modelKey(tr.model) === modelKey(c.model));
+function renderTestReports(){
+  const okKeys = ["valid","watch","renew"];
+  const rows = TEST_REPORTS.map(tr => {
+    const certs = certsForReport(tr), live = certs.find(c => okKeys.includes(certStatus(c).key));
+    return {tr, certs, link: !certs.length ? "none" : live ? "valid" : "inactive"};
+  });
+  const cs = document.getElementById("trCar"), cv = cs.value;
+  const cars = [...new Set(TEST_REPORTS.map(t => t.car).filter(Boolean))];
+  cs.innerHTML = `<option value="">全部車型</option>` + cars.map(c => `<option value="${c}">${CAR_NAME[c] || c}</option>`).join(""); cs.value = cv;
+  const q = document.getElementById("trSearch").value.trim().toLowerCase(), lv = document.getElementById("trLink").value, rt = document.getElementById("trRetest").checked;
+  const list = rows.filter(({tr, certs, link}) => (!cv || tr.car === cv) && (!lv || link === lv) && (!rt || tr.retest) &&
+    (!q || [tr.model, tr.report, tr.orig, ...certs.map(c => c.certNo)].join(" ").toLowerCase().includes(q)))
+    .sort((a,b) => modelKey(a.tr.model).localeCompare(modelKey(b.tr.model)));
+  const cnt = k => rows.filter(r => r.link === k).length;
+  document.getElementById("trCount").textContent = `${TEST_REPORTS.length} 份報告・對應有效證書 ${cnt("valid")}・證書已失效 ${cnt("inactive")}・無對應 ${cnt("none")}`;
+  document.getElementById("trTable").innerHTML = `<thead><tr><th>型式</th><th>測試報告編號</th><th>車型</th><th>對應型式認可證書</th><th>證書狀態</th><th>報告下載</th></tr></thead><tbody>` +
+    (list.map(({tr, certs}) => `<tr>
+      <td class="mono"><b>${esc(tr.model)}</b>${tr.size?`<div class="small muted">${esc(tr.size)}</div>`:""}</td>
+      <td class="mono">${esc(tr.report)}${tr.retest?` <span class="badge b-info">重測</span>`:""}</td>
+      <td>${esc(CAR_NAME[tr.car] || tr.car || "—")}</td>
+      <td class="mono">${certs.length ? certs.map(c => `<a href="#" onclick="editCert('${esc(c.id)}');return false">${esc(c.certNo)}</a><div class="small muted">${esc(c.model)}</div>`).join("") : `<span class="muted">—</span>`}</td>
+      <td>${certs.length ? certs.map(c => { const s = certStatus(c); return `<div><span class="badge ${s.cls}">${s.label}</span> <span class="small muted">${esc(c.expiryDate)}</span></div>`; }).join("") : `<span class="badge b-gray">無對應證書</span>`}</td>
+      <td><a class="btn sm" href="${encodeURI(tr.path)}" target="_blank" title="${esc(tr.orig)}">📄 ${esc(tr.report || "報告")}（${(tr.kb/1024).toFixed(1)} MB）</a></td></tr>`).join("")
+     || `<tr><td colspan="6" class="empty">沒有符合條件的測試報告</td></tr>`) + "</tbody>";
+}
+const isWheelCert = c => c.category === "型式認可" && /輪圈|鋁圈|wheel/i.test(`${c.product} ${c.extra?.["SharePoint 類別"]||""} ${c.model}`);
+function inspTypeCert(i){ return i.typeCert ? S.certs.find(c=>norm(c.certNo)===norm(i.typeCert)) : null; }
+function renderInsp(){
+  const list = S.inspections || [];
+  const ok = list.filter(i=>i.status==="合格"), pend = list.filter(i=>i.status!=="合格");
+  const qtyBy = {}; ok.forEach(i=>{ qtyBy[i.unit||""] = (qtyBy[i.unit||""]||0) + (Number(i.qty)||0); });
+  const wheels = S.certs.filter(isWheelCert);
+  const wk = c => certStatus(c).key, okKeys = ["valid","watch","renew"];
+  const wValid = wheels.filter(c=>okKeys.includes(wk(c))), wRenew = wheels.filter(c=>wk(c)==="renew"), wExp = wheels.filter(c=>wk(c)==="expired");
+  document.getElementById("inspKpis").innerHTML = [
+    {cls:"ok", label:"有效鋁圈證書", value:wValid.length, hint:`共 ${wheels.length} 張；${wheels.filter(c=>c.files?.length).length} 張有證書檔可下載`},
+    {cls:wRenew.length?"warn":(wExp.length?"bad":"ok"), label:"需展延／已過期", value:`${wRenew.length} / ${wExp.length}`, hint:`另 ${wheels.filter(c=>["retired","replaced"].includes(wk(c))).length} 張不延展或已換證`},
+    {cls:"ok", label:"已取得合格證", value:ok.length, hint:`${new Set(ok.map(i=>i.declNo)).size} 份報單，共 ${Object.entries(qtyBy).map(([u,v])=>`${v} ${u}`).join(" / ")||0}`},
+    {cls:pend.length?"warn":"ok", label:"待確認報驗", value:pend.length, hint:pend.length?[...new Set(pend.map(i=>i.declNo))].join("、"):"無"},
+  ].filter(k => !(window.PUBLIC_MODE && ["已取得合格證","待確認報驗"].includes(k.label))).map(k=>`<div class="card kpi ${k.cls}"><div class="label">${k.label}</div><div class="value">${esc(k.value)}</div><div class="hint">${esc(k.hint)}</div></div>`).join("");
+
+  const ws = document.getElementById("wheelStatus"), wsv = ws.value, wc = document.getElementById("wheelCar"), wcv = wc.value;
+  const present = STATUS_ORDER.filter(k => wheels.some(c => wk(c) === k));
+  ws.innerHTML = `<option value="">全部狀態</option>` + present.map(k=>`<option value="${k}">${STATUS_LABEL[k]}（${wheels.filter(c=>wk(c)===k).length}）</option>`).join(""); ws.value = wsv;
+  const cars = [...new Set(wheels.map(c=>c.extra?.["車型"]).filter(Boolean))].sort();
+  wc.innerHTML = `<option value="">全部車型</option>` + cars.map(v=>`<option>${esc(v)}</option>`).join(""); wc.value = wcv;
+  const wq = document.getElementById("wheelSearch").value.trim().toLowerCase(), filesOnly = document.getElementById("wheelFilesOnly").checked;
+  const wl = wheels.filter(c => (!wsv || wk(c)===wsv) && (!wcv || c.extra?.["車型"]===wcv) && (!filesOnly || c.files?.length) &&
+      (!wq || [c.certNo, c.model, c.partNos, c.notes, ...Object.values(c.extra||{})].join(" ").toLowerCase().includes(wq)))
+    .sort((a,b) => STATUS_ORDER.indexOf(wk(a)) - STATUS_ORDER.indexOf(wk(b)) || String(a.expiryDate).localeCompare(String(b.expiryDate)));
+  document.getElementById("wheelCount").textContent = `顯示 ${wl.length} / ${wheels.length} 張`;
+  document.getElementById("inspTypeTable").innerHTML = `<thead><tr><th>證書號碼</th><th>型式（尺寸）</th><th>車型</th><th>適用料號</th><th>有效期限</th><th>狀態</th><th>報驗批數／合格數量</th><th>證書下載</th></tr></thead><tbody>` +
+    (wl.map(c=>{
+      const rel = list.filter(i=>norm(i.typeCert)===norm(c.certNo) && i.status==="合格"), s = certStatus(c);
+      const parts = c.partNos || c.extra?.["Tesla 料號"] || "";
+      const spDiff = c.extra?.["SharePoint 到期日（與官方資料不同）"];
+      return `<tr style="cursor:pointer" onclick="editCert('${esc(c.id)}')"><td class="mono"><b>${esc(c.certNo)}</b></td><td>${esc(c.model)}</td><td>${esc(c.extra?.["車型"]||"")}</td>
+        <td class="mono small">${esc(parts)}</td>
+        <td>${esc(c.expiryDate)}${s.days!=null&&s.days>=0?`<div class="small muted">剩 ${s.days} 天</div>`:""}${spDiff?`<div class="small" style="color:var(--info)">SharePoint 舊資料：${esc(spDiff)}</div>`:""}</td>
+        <td><span class="badge ${s.cls}">${s.label}</span>${c.notes && !/每批進口/.test(c.notes)?`<div class="small muted">${esc(c.notes.replace(/取得型式認可後，每批進口仍需向 BSMI 報驗取得合格證書；?/,""))}</div>`:""}</td>
+        <td>${rel.length ? `${rel.length} 批／${rel.reduce((a,i)=>a+(Number(i.qty)||0),0)} ${esc(rel[0].unit||"")}` : `<span class="muted">—</span>`}</td>
+        <td onclick="event.stopPropagation()">${c.files?.length ? fileLinks(c.files) : `<span class="small muted">尚無證書檔</span>`}${reportsForCert(c).map(tr => `<a class="btn sm" style="margin:2px 4px 2px 0" href="${encodeURI(tr.path)}" target="_blank">📄 測試報告 ${esc(tr.report)}</a>`).join("")}</td></tr>`;
+    }).join("") || `<tr><td colspan="8" class="empty">沒有符合條件的證書</td></tr>`) + "</tbody>";
+
+  const q = document.getElementById("inspSearch").value.trim().toLowerCase(), fs = document.getElementById("inspStatus").value;
+  const rows = list.map((i,idx)=>({i,idx})).filter(({i})=>(!fs || i.status===fs) && (!q || Object.values(i).join(" ").toLowerCase().includes(q)))
+    .sort((a,b)=>String(b.i.issueDate).localeCompare(String(a.i.issueDate)));
+  document.getElementById("inspTable").innerHTML = `<thead><tr><th>狀態</th><th>合格證號</th><th>發證日期</th><th>分局</th><th>報單號碼／項次</th><th>Tesla 料號</th><th>料名／規格</th><th>數量</th><th>製造廠／產地</th><th>批號</th><th>型式認可</th><th>附件</th><th></th></tr></thead><tbody>` +
+    (rows.map(({i,idx})=>{ const tc = inspTypeCert(i), ts = tc ? certStatus(tc) : null;
+      return `<tr><td><span class="badge ${INSP_STATUS_CLS[i.status]||"b-gray"}">${esc(i.status)}</span></td>
+        <td class="mono"><b>${esc(i.certNo)||"—"}</b>${i.appNo?`<div class="small muted">申請書 ${esc(i.appNo)}${i.review?"・"+esc(i.review):""}</div>`:""}</td>
+        <td>${esc(i.issueDate)}</td><td class="small">${esc(i.branch)}</td>
+        <td class="mono">${esc(i.declNo)}${i.item?`<div class="small muted">項次 ${esc(i.item)}</div>`:""}</td>
+        <td class="mono">${esc(i.partNo)}</td>
+        <td class="small">${esc(i.desc)}${i.spec?`<div class="muted">${esc(i.spec)}・型式 ${esc(i.model)}</div>`:""}${i.notes?`<div style="color:var(--warn)">${esc(i.notes)}</div>`:""}</td>
+        <td>${i.qty?`<b>${esc(i.qty)}</b> ${esc(i.unit)}`:"—"}${i.netWeight?`<div class="small muted">${esc(i.netWeight)}</div>`:""}</td>
+        <td class="small">${esc(i.maker)}${i.origin?`<div class="muted">${esc(i.origin)}</div>`:""}</td>
+        <td class="mono">${esc(i.batch)}</td>
+        <td class="mono">${i.typeCert?`${esc(i.typeCert)}<div>${ts?`<span class="badge ${ts.cls}">${ts.label}</span>`:`<span class="badge b-bad">未建檔</span>`}</div>`:"—"}</td>
+        <td style="min-width:150px">${fileLinksCompact(i.files)}</td>
+        <td><button class="btn sm" onclick="editInsp(${idx})">編輯</button></td></tr>`; }).join("") || `<tr><td colspan="13" class="empty">沒有符合條件的紀錄</td></tr>`) + "</tbody>";
+}
+let editingInsp = null;
+function editInsp(idx){
+  editingInsp = idx ?? null;
+  const i = idx != null ? S.inspections[idx] : {status:"合格", issueDate:iso(TODAY), unit:"PCE", files:[]};
+  document.getElementById("inspModalTitle").textContent = idx != null ? `編輯報驗紀錄 ${i.declNo||""}` : "新增報驗紀錄";
+  document.getElementById("inspForm").innerHTML = INSP_FIELDS.map(([k,t,type=""])=>{
+    const v = esc(i[k] ?? "");
+    if (type.startsWith("select:")) return `<label>${t}<select id="i_${k}">${type.slice(7).split(",").map(o=>`<option ${o===i[k]?"selected":""}>${o}</option>`).join("")}</select></label>`;
+    if (type==="full") return `<label class="full">${t}<textarea id="i_${k}" rows="2">${v}</textarea></label>`;
+    return `<label>${t}<input type="${type==="date"?"date":type==="number"?"number":"text"}" id="i_${k}" value="${v}" ${k==="typeCert"?'list="typeCertList"':""}></label>`;
+  }).join("") + `<datalist id="typeCertList">${S.certs.filter(c=>c.category==="型式認可").map(c=>`<option value="${esc(c.certNo)}">${esc(c.model)}</option>`).join("")}</datalist>` +
+    (i.files?.length ? `<div class="full small muted">附件：${fileLinks(i.files)}</div>` : "");
+  const del = document.getElementById("inspDeleteBtn");
+  del.style.display = idx != null ? "" : "none";
+  del.onclick = () => { if (confirm("確定刪除此報驗紀錄？")){ S.inspections.splice(idx,1); save(); closeModal("inspModal"); renderAll(); toast("已刪除"); } };
+  openModal("inspModal");
+}
+function saveInsp(){
+  const data = Object.fromEntries(INSP_FIELDS.map(([k,,type=""])=>{ const v = document.getElementById("i_"+k).value.trim(); return [k, type==="number" ? (Number(v)||0) : v]; }));
+  if (editingInsp != null) Object.assign(S.inspections[editingInsp], data);
+  else (S.inspections = S.inspections || []).push({id:"M-"+Date.now(), files:[], ...data});
+  save(); closeModal("inspModal"); renderAll(); toast("已儲存");
+}
+function exportInspCSV(){
+  const head = INSP_FIELDS.map(f=>f[1]).concat(["附件"]);
+  const lines = (S.inspections||[]).map(i=>INSP_FIELDS.map(([k])=>i[k]).concat([(i.files||[]).map(f=>f.path).join(" ; ")]).map(csvCell).join(","));
+  download(`import_lic_inspections_${iso(TODAY)}.csv`, "\uFEFF" + [head.map(csvCell).join(","), ...lines].join("\r\n"), "text/csv;charset=utf-8");
+}
+
+/* ================= 匯入 ================= */
+let importTarget = "certs";
+const HINTS = {
+  certs: `支援 BSMI 驗證登錄證書查詢匯出的 excel.xls（可離線讀取），以及 SharePoint 清單（Certificate）→「匯出」→「匯出至 CSV」的檔案。<br>系統會依「證書號碼」比對：已存在的證書會更新欄位（保留年費資訊），新的證書會新增。可辨識欄位：證書號碼、品名、型式/型號、號列、類別、有效期限/到期日、發證日期、備註。`,
+  permits: `開啟「輸入許可List.xlsx」→ 檔案 → 另存新檔 → 下載複本，再把檔案拖進來（會讀取第一個工作表）。<br>所有欄位都會保留；系統會自動找出「料號」「數量」「單位」「有效期限 / 到期」欄位，用於料號查詢與過期判斷，找不到時可在頁面上手動指定。`
+};
+function openImport(t){ setImportTarget(t || importTarget); document.getElementById("pasteBox").value=""; document.getElementById("importPreview").innerHTML=""; openModal("importModal"); }
+function setImportTarget(t){
+  importTarget = t;
+  document.querySelectorAll("#importTarget button").forEach(b=>b.classList.toggle("active", b.dataset.v===t));
+  document.getElementById("importHint").innerHTML = HINTS[t];
+  document.getElementById("importHsBox").style.display = t === "permits" ? "" : "none";
+}
+document.querySelectorAll("#importTarget button").forEach(b=>b.onclick=()=>setImportTarget(b.dataset.v));
+const drop = document.getElementById("drop"), fileInput = document.getElementById("fileInput");
+drop.onclick = () => fileInput.click();
+drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave = () => drop.classList.remove("over");
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove("over"); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+fileInput.onchange = () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); fileInput.value=""; };
+
+async function handleFile(file){
+  const name = file.name.toLowerCase();
+  try{
+    if (name.endsWith(".json")) return restoreBackup(await file.text());
+    let table;
+    const head = name.endsWith(".xls") ? await file.slice(0, 4096).text() : "";
+    if (/<table|<html|<tr/i.test(head)){
+      const dom = new DOMParser().parseFromString(await file.text(), "text/html");
+      table = [...dom.querySelectorAll("tr")].map(tr => [...tr.querySelectorAll("td,th")].map(td => {
+        td.querySelectorAll("br").forEach(b => b.replaceWith(" "));
+        return td.textContent.replace(/\s+/g, " ").trim();
+      }));
+    } else if (name.endsWith(".xlsx") || name.endsWith(".xls")){
+      await loadSheetJS();
+      const wb = XLSX.read(await file.arrayBuffer(), {type:"array", cellDates:true});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      table = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, dateNF:"yyyy-mm-dd", defval:""});
+    } else {
+      table = parseDelimited(await file.text());
+    }
+    applyImport(table, file.name);
+  }catch(err){ console.error(err); toast("匯入失敗：" + err.message); }
+}
+function importFromPaste(){
+  const t = document.getElementById("pasteBox").value;
+  if (!t.trim()) return toast("請先貼上表格內容或選擇檔案");
+  applyImport(parseDelimited(t), "貼上");
+}
+function loadSheetJS(){
+  if (window.XLSX) return Promise.resolve();
+  return new Promise((ok, fail)=>{
+    const s = document.createElement("script");
+    s.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+    s.onload = ok; s.onerror = () => fail(new Error("無法載入 Excel 解析元件（需要網路）。請改用 CSV 或直接貼上表格。"));
+    document.head.appendChild(s);
+  });
+}
+function parseDelimited(text){
+  text = text.replace(/^\uFEFF/, "");
+  const first = text.split(/\r?\n/)[0];
+  const delim = first.includes("\t") ? "\t" : (first.split(";").length > first.split(",").length ? ";" : ",");
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i=0;i<text.length;i++){
+    const ch = text[i];
+    if (q){ if (ch === '"'){ if (text[i+1] === '"'){ cell+='"'; i++; } else q=false; } else cell+=ch; }
+    else if (ch === '"') q = true;
+    else if (ch === delim){ row.push(cell); cell=""; }
+    else if (ch === "\n" || ch === "\r"){ if (ch==="\r" && text[i+1]==="\n") i++; row.push(cell); rows.push(row); row=[]; cell=""; }
+    else cell += ch;
+  }
+  if (cell || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+function toObjects(table){
+  table = table.map(r=>r.map(c=>String(c ?? "").trim())).filter(r=>r.some(c=>c));
+  if (table.length < 2) throw new Error("找不到資料列（第一列需為標題）");
+  const hIdx = table.findIndex(r => r.filter(Boolean).length >= Math.min(2, Math.max(...table.map(x=>x.filter(Boolean).length))));
+  const raw = table[hIdx]; const headers = []; 
+  raw.forEach((h,i)=>{ let n = h || `欄位${i+1}`; while (headers.includes(n)) n += "_"; headers.push(n); });
+  const rows = table.slice(hIdx+1).map(r => Object.fromEntries(headers.map((h,i)=>[h, r[i] ?? ""])));
+  const used = headers.filter(h => rows.some(r => r[h]));
+  return {headers: used, rows: rows.map(r=>Object.fromEntries(used.map(h=>[h,r[h]])))};
+}
+function applyImport(table, fileName){
+  let {headers, rows} = toObjects(table);
+  if (importTarget === "permits"){
+    const prefix = document.getElementById("importHsPrefix").value.replace(/\D/g, "");
+    if (prefix){
+      const hsCol = guessCol(headers, HS_COL_RE);
+      if (!hsCol) throw new Error("找不到 HS 欄位，無法依 HS 篩選");
+      const total = rows.length;
+      rows = rows.filter(r => String(r[hsCol] ?? "").replace(/\D/g, "").startsWith(prefix));
+      fileName = `${fileName}（HS ${prefix}：${rows.length} / ${total} 筆）`;
+      if (!rows.length) throw new Error(`沒有 HS 開頭為 ${prefix} 的資料`);
+    }
+    const expCol = guessCol(headers, /有效期|到期|期限|截止|expir|valid/i);
+    const dateCol = guessCol(headers, /申請日|核發日|發證日|簽發|核准日|日期|date/i, expCol);
+    permitGroupVal = ""; permitColFilters = {}; permitCollapsed.clear();
+    S.permits = {headers, rows, expCol, dateCol, groupCol: guessPermitGroupCol(headers), importedAt: new Date().toLocaleString("zh-TW"), fileName,
+      partCol: guessCol(headers, PART_RE), qtyCol: guessCol(headers, QTY_RE), unitCol: guessCol(headers, UNIT_RE)};
+    save(); closeModal("importModal"); renderAll(); gotoTab("permits");
+    toast(`已匯入 ${rows.length} 筆進口許可紀錄${expCol?`，到期欄位：${expCol}`:"，請手動選擇到期欄位"}`);
+    return;
+  }
+  if (headers.includes("適用料號") || headers.includes("商品類別號")){
+    const r = mergeSharePoint(S.certs, rows, "SharePoint 清單");
+    save(); closeModal("importModal"); renderAll(); gotoTab("certs");
+    toast(`SharePoint 清單匯入完成：新增 ${r.added} 張、更新 ${r.updated} 張（已有官方日期的證書不覆蓋日期）`);
+    return;
+  }
+  const F = {
+    certNo: guessCol(headers, /證書.*(號|編)|證號|cert.*(no|num|id)|^title$|標題/i),
+    product: guessCol(headers, /品名|產品|貨品|中文名稱|product|item/i),
+    model: guessCol(headers, /型式|型號|model|type no/i),
+    hs: guessCol(headers, /號列|hs|稅則|分類|ccc/i),
+    category: guessCol(headers, /類別|種類|證書類型|category|類型/i),
+    expiryDate: guessCol(headers, /有效期|到期|期限|expir|valid/i),
+    issueDate: guessCol(headers, /發證|核發|簽發|登錄日|issue/i),
+    issuer: guessCol(headers, /發證單位|發證機關|issuer|authority/i),
+    agency: guessCol(headers, /主管機關|NCC.*BSMI|BSMI.*NCC|agency/i),
+    notes: guessCol(headers, /備註|說明|remark|note/i),
+  };
+  if (!F.certNo) throw new Error("找不到「證書號碼」欄位，請確認標題列");
+  const isBsmiExport = headers.some(h => /CCC_CODE|主型式/i.test(h));
+  const srcLabel = isBsmiExport ? "BSMI 證書查詢匯出" : "SharePoint 匯入";
+  let added = 0, updated = 0;
+  rows.forEach(r=>{
+    const no = r[F.certNo]; if (!no) return;
+    const data = {}; Object.entries(F).forEach(([k,h])=>{ if (h && r[h] !== "") data[k] = r[h]; });
+    ["expiryDate","issueDate"].forEach(k=>{ if (data[k]){ const d=parseDate(data[k]); data[k] = d ? iso(d) : data[k]; } });
+    if (data.agency) data.agency = /NCC|通訊|通傳/i.test(data.agency) ? "NCC" : /BSMI|標準檢驗|標檢/i.test(data.agency) ? "BSMI" : "auto";
+    if (data.hs){ const m = data.hs.replace(/\s/g,"").match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d)([A-Z]?)$/); if (m) data.hs = `${m[1]}.${m[2]}.${m[3]}.${m[4]}.${m[5]}${m[6]?"-"+m[6]:""}`; }
+    if (!data.category && !F.category) data.category = /^CI/i.test(no) ? "商品驗證登錄" : /^V/i.test(no) ? "自願性產品驗證" : "";
+    const extra = Object.fromEntries(Object.entries(r).filter(([k,v]) => v && v !== "空白" && !Object.values(F).includes(k) && !/代號|公司名稱|地址/.test(k)));
+    const ex = S.certs.find(c=>norm(c.certNo)===norm(no));
+    if (ex){ Object.assign(ex, data, {extra:{...(ex.extra||{}), ...extra}}); if (!ex.source?.includes(srcLabel)) ex.source = (ex.source ? ex.source + " + " : "") + srcLabel; updated++; }
+    else { S.certs.push({id:no, certNo:no, category:"", product:"", model:"", hs:"", issuer:isBsmiExport?"經濟部標準檢驗局":"", issueDate:"", expiryDate:"", feeNotice:"", feeAmount:0, notes:"", ...data, source:srcLabel, extra}); added++; }
+  });
+  save(); closeModal("importModal"); renderAll(); gotoTab("certs");
+  toast(`證書匯入完成：新增 ${added} 張、更新 ${updated} 張${F.expiryDate?"":"（找不到有效期限欄位）"}`);
+}
+
+/* ================= 匯出 / 備份 ================= */
+function download(name, content, type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
+const csvCell = v => `"${String(v??"").replace(/"/g,'""')}"`;
+function exportCertsCSV(){
+  const head = ["證書號碼","主管機關","類別","品名","型式","商品分類號列","發證單位","有效期限","民國","剩餘天數","狀態","建議動作","年費通知單","年費金額","年費狀態","備註"];
+  head.splice(5, 0, "適用料號");
+  const lines = S.certs.map(c=>{ const s=certStatus(c), f=feeStatus(c); return [c.certNo,agencyOf(c),c.category,c.product,c.model,c.partNos||"",c.hs,c.issuer,c.expiryDate,toROC(c.expiryDate),s.days??"",s.label,s.action,c.feeNotice,c.feeAmount,f.label,c.notes].map(csvCell).join(","); });
+  download(`import_lic_certificates_${iso(TODAY)}.csv`, "\uFEFF" + [head.map(csvCell).join(","), ...lines].join("\r\n"), "text/csv;charset=utf-8");
+}
+function exportShare(){
+  const stamp = new Date().toISOString();
+  const data = {...structuredClone(S), embeddedStamp:stamp, sharedAt:new Date().toLocaleString("zh-TW")};
+  const doc = document.documentElement.cloneNode(true);
+  doc.querySelectorAll("#embedded-data, script[src]").forEach(n=>n.remove());
+  doc.querySelectorAll(".modal-bg.show,.toast.show").forEach(n=>n.classList.remove("show"));
+  doc.querySelectorAll(".tab, nav button").forEach(n=>n.classList.remove("active"));
+  doc.querySelector("#tab-dash").classList.add("active");
+  doc.querySelector('nav button[data-tab="dash"]').classList.add("active");
+  const tag = document.createElement("script");
+  tag.id = "embedded-data";
+  tag.textContent = `window.EMBEDDED_DATA = ${JSON.stringify(data).replace(/</g,"\\u003c")};`;
+  const main = [...doc.querySelectorAll("script")].find(s=>s.textContent.includes("SEED_VERSION"));
+  main.before(tag);
+  download(`import_lic_share_${iso(TODAY)}.html`, "<!DOCTYPE html>\n" + doc.outerHTML, "text/html;charset=utf-8");
+  S.embeddedStamp = stamp; save();
+  toast("已匯出分享版，上傳到 Teams / SharePoint 即可分享");
+}
+function exportAll(){ download(`import_lic_backup_${iso(TODAY)}.json`, JSON.stringify(S,null,2), "application/json"); toast("已匯出備份（可在「匯入資料」還原）"); }
+function restoreBackup(text){
+  const d = JSON.parse(text); if (!d.certs || !d.notices) throw new Error("不是有效的備份檔");
+  S = d; S.seedVersion = SEED_VERSION; save(); closeModal("importModal"); renderAll(); toast("備份已還原");
+}
+
+/* ================= 其他 ================= */
+function openSettings(){ ["renew","watch","permitWarn"].forEach(k=>document.getElementById("s_"+k).value=S.settings[k]); openModal("settingsModal"); }
+function saveSettings(){ ["renew","watch","permitWarn"].forEach(k=>S.settings[k]=Number(document.getElementById("s_"+k).value)||S.settings[k]); save(); closeModal("settingsModal"); renderAll(); toast("設定已儲存"); }
+function resetAll(){ if(!confirm("將清除所有匯入資料與繳費標記，回到初始的 13 張證書。確定？")) return; localStorage.removeItem(KEY); S = load(); save(); closeModal("settingsModal"); renderAll(); toast("已重設"); }
+function openModal(id){ document.getElementById(id).classList.add("show"); }
+function closeModal(id){ document.getElementById(id).classList.remove("show"); }
+document.querySelectorAll(".modal-bg").forEach(m=>m.addEventListener("click", e=>{ if(e.target===m) m.classList.remove("show"); }));
+document.addEventListener("keydown", e=>{ if (e.key==="Escape") document.querySelectorAll(".modal-bg.show").forEach(m=>m.classList.remove("show")); });
+function gotoTab(t){
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active", b.dataset.tab===t));
+  document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("active", s.id==="tab-"+t));
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>gotoTab(b.dataset.tab));
+let toastTimer; function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),2800); }
+["certSearch","certStatus","certCat","certFee"].forEach(id=>document.getElementById(id).addEventListener("input", renderCerts));
+document.getElementById("permitSearch").addEventListener("input", renderPermits);
+document.getElementById("permitStatus").addEventListener("input", renderPermits);
+document.getElementById("permitGrouped").addEventListener("change", renderPermits);
+document.getElementById("permitGroupCol").addEventListener("change", e=>{ S.permits.groupCol = e.target.value; permitGroupVal = ""; permitCollapsed.clear(); save(); renderAll(); });
+document.getElementById("permitTable").addEventListener("input", e=>{
+  const el = e.target; if (!el.id?.startsWith("pf_")) return;
+  permitColFilters[el.dataset.col] = {v: el.value, exact: el.dataset.exact === "1"};
+  renderPermits();
+});
+document.getElementById("permitExpCol").addEventListener("change", e=>{ S.permits.expCol=e.target.value; save(); renderAll(); });
+document.getElementById("permitDateCol").addEventListener("change", e=>{ S.permits.dateCol=e.target.value; save(); renderAll(); });
+[["partCol","partCol"],["qtyCol","qtyCol"],["unitCol","unitCol"]].forEach(([id,k])=>document.getElementById(id).addEventListener("change", e=>{ S.permits[k]=e.target.value; save(); renderParts(); }));
+document.getElementById("partSearch").addEventListener("input", renderParts);
+document.getElementById("partSumSearch").addEventListener("input", renderParts);
+["inspSearch","inspStatus","wheelSearch","wheelStatus","wheelCar","wheelFilesOnly"].forEach(id=>document.getElementById(id).addEventListener("input", renderInsp));
+["trSearch","trCar","trLink","trRetest"].forEach(id=>document.getElementById(id).addEventListener("input", renderTestReports));
+document.getElementById("trbInput").addEventListener("input", updateTrbCount);
+document.getElementById("vendorSearch").addEventListener("input", renderVendors);
+
+/* ---------- 資訊查找 ---------- */
+const LOOKUP_LINKS = [
+  {name:"BSMI 商品驗證登錄／型式認可證書查詢", url:"https://civil.bsmi.gov.tw", desc:"標準檢驗局證書查詢，證書正本上的 QR Code 即連到此系統", tag:"BSMI"},
+  {name:"BSMI 驗證登錄線上申辦", url:"https://rpconline.bsmi.gov.tw/app/", desc:"標準檢驗局驗證登錄線上申辦系統", tag:"BSMI"},
+  {name:"關港貿單一窗口｜稅則稅率查詢", url:"https://portal.sw.nat.gov.tw/APGQO/GC411", desc:"查詢貨品分類號列、稅率與輸入規定（MW0、MP1 等）", tag:"海關"},
+];
+function renderLookup(){
+  const all = [...LOOKUP_LINKS, ...(S.links || []).map((l, i) => ({...l, custom:i}))];
+  document.getElementById("lookupLinks").innerHTML = all.map(l => {
+    const tag = l.url ? `a href="${esc(l.url)}" target="_blank" rel="noopener"` : "div";
+    return `<${tag} class="notice" style="text-decoration:none;color:inherit;${l.pin ? "border-left:5px solid var(--brand);" : ""}">
+      <div style="display:flex;align-items:center;gap:8px"><span class="badge ${l.pin ? "b-bsmi" : l.custom != null ? "b-info" : "b-gray"}">${esc(l.tag || "自訂")}</span><b>${esc(l.name)}</b></div>
+      <div class="small muted">${esc(l.desc || "")}</div>
+      <div class="small mono" style="color:var(--info);word-break:break-all">${l.url ? esc(l.url) : `<span class="muted">（尚無連結）</span>`}</div>
+      ${l.custom != null ? `<div><button class="btn sm danger" onclick="event.preventDefault();removeLookupLink(${l.custom})">刪除</button></div>` : ""}
+    </${l.url ? "a" : "div"}>`;
+  }).join("");
+}
+function addLookupLink(){
+  const name = document.getElementById("lkName").value.trim(), url = document.getElementById("lkUrl").value.trim(), desc = document.getElementById("lkDesc").value.trim();
+  if (!name || !/^https?:\/\//i.test(url)) return toast("請輸入名稱與 http(s) 開頭的網址");
+  (S.links = S.links || []).push({name, url, desc, tag:"自訂"});
+  ["lkName","lkUrl","lkDesc"].forEach(id => document.getElementById(id).value = "");
+  save(); renderLookup(); toast("已新增連結");
+}
+const WARPTRADE_DETAIL = "";
+const trbCodes = () => [...new Set((document.getElementById("trbInput").value.toUpperCase().match(/TR\d{6,}/g) || []))];
+function updateTrbCount(){
+  const codes = trbCodes();
+  document.getElementById("trbCount").textContent = codes.length ? `已辨識 ${codes.length} 筆` : "";
+  document.getElementById("trbList").textContent = codes.length ? codes.slice(0, 8).join("、") + (codes.length > 8 ? ` …等 ${codes.length} 筆` : "") : "";
+}
+function openTrBatch(){
+  const codes = trbCodes();
+  if (!codes.length) return toast("請先貼上至少一個 TR 交易編號");
+  if (codes.length > 30 && !confirm(`共 ${codes.length} 筆，一次開啟太多分頁可能讓瀏覽器變慢，確定要全部開啟？`)) return;
+  codes.forEach((code, i) => setTimeout(() => window.open(WARPTRADE_DETAIL + code, "_blank"), i * 400));
+  toast(`正在開啟 ${codes.length} 個頁面…如未全部開啟，請允許此頁面的彈出視窗`);
+}
+function removeLookupLink(i){ if (!confirm("確定刪除此連結？")) return; S.links.splice(i, 1); save(); renderLookup(); }
+
+/* ---------- 來貨相關資訊 ---------- */
+const INBOUND_CONTACTS = [];
+const VENDORS = [];
+const telHref = v => { let d = String(v).split("/")[0].replace(/(#|ext).*$/i, "").replace(/[^\d]/g, "");
+  if (d.startsWith("8860")) d = "+886" + d.slice(4); else if (d.startsWith("886")) d = "+" + d; return "tel:" + d; };
+const contactRows = p => [
+  p.address && `<div class="small">📍 ${esc(p.address)}${p.addressEn ? `<div class="muted" style="margin-left:18px">${esc(p.addressEn)}</div>` : ""}</div>`,
+  p.tel && `<div class="small">☎ Tel：<a href="${telHref(p.tel)}">${esc(p.tel)}</a></div>`,
+  p.fax && `<div class="small">📠 Fax：${esc(p.fax)}</div>`,
+  p.phone && `<div class="small">📱 Phone：<a href="${telHref(p.phone)}">${esc(p.phone)}</a></div>`,
+  p.mail && `<div class="small">✉ Mail：<a href="mailto:${esc(p.mail)}">${esc(p.mail)}</a></div>`,
+].filter(Boolean).join("");
+function renderVendors(){
+  const palette = ["#0891b2","#65a30d","#4f46e5","#ea580c","#0f766e","#be123c","#a16207","#475569"];
+  const all = [...VENDORS, ...(S.vendors || []).map((v, i) => ({...v, custom:i, accent: v.accent || palette[i % palette.length]}))];
+  const q = document.getElementById("vendorSearch").value.trim().toLowerCase();
+  const list = all.filter(v => !q || JSON.stringify(v).toLowerCase().includes(q));
+  document.getElementById("vendorCount").textContent = `${list.length} / ${all.length} 家`;
+  document.getElementById("vendorCards").innerHTML = list.map(v => `
+    <div class="notice" style="border-left:5px solid ${v.accent || "var(--info)"};${v.accent ? `background:${v.accent}0d;` : ""}">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="badge ${v.accent ? "" : "b-info"}" style="${v.accent ? `background:${v.accent}1f;color:${v.accent}` : ""}">${esc(v.role || "廠商")}</span><b style="font-size:15px">${esc(v.company)}</b>
+        ${v.custom != null ? `<button class="btn sm danger" style="margin-left:auto" onclick="removeVendor(${v.custom})">刪除</button>` : ""}</div>
+      ${v.dept ? `<div class="small muted">${esc(v.dept)}</div>` : ""}
+      ${(v.contacts || [v]).map((p, i) => `<div style="${i ? "padding-top:8px;border-top:1px dashed var(--line)" : ""}">
+        ${p.name ? `<div>👤 <b>${esc(p.name)}</b>${p.title ? ` <span class="small muted">｜${esc(p.title)}</span>` : ""}</div>` : ""}
+        ${contactRows(p)}</div>`).join("")}
+      ${v.note ? `<div class="small muted">📝 ${esc(v.note)}</div>` : ""}
+      ${(m => m.length > 1 ? `<div><a class="btn sm" href="mailto:${esc(m.join(";"))}">✉ 寄信給全部聯絡人（${m.length}）</a></div>` : "")((v.contacts || [v]).map(p => p.mail).filter(Boolean))}
+    </div>`).join("") || `<div class="empty">沒有符合條件的廠商</div>`;
+}
+function addVendor(){
+  const g = id => document.getElementById(id).value.trim();
+  if (!g("vdRole") || !g("vdCompany")) return toast("請輸入類型與公司名稱");
+  (S.vendors = S.vendors || []).push({role:g("vdRole"), company:g("vdCompany"), name:g("vdName"), address:g("vdAddress"),
+    tel:g("vdTel"), fax:g("vdFax"), phone:g("vdPhone"), mail:g("vdMail"), note:g("vdNote")});
+  ["vdRole","vdCompany","vdName","vdAddress","vdTel","vdFax","vdPhone","vdMail","vdNote"].forEach(id => document.getElementById(id).value = "");
+  save(); renderVendors(); toast("已新增廠商");
+}
+function removeVendor(i){ if (!confirm("確定刪除此廠商？")) return; S.vendors.splice(i, 1); save(); renderVendors(); }
+function inboundGroups(){
+  const groups = INBOUND_CONTACTS.map(g => ({group:g.group, people:g.people.map(p => ({...p}))}));
+  (S.inboundContacts || []).forEach((p, i) => {
+    const name = p.group === "ENERGY相關" ? "Energy" : p.group;
+    let g = groups.find(x => x.group === name);
+    if (!g) groups.push(g = {group:name, people:[]});
+    g.people.push({...p, custom:i});
+  });
+  return groups;
+}
+function renderInbound(){
+  const groups = inboundGroups();
+  document.getElementById("ibGroupList").innerHTML = groups.map(g => `<option value="${esc(g.group)}">`).join("");
+  document.getElementById("inboundGroups").innerHTML = groups.map(g => `
+    <div class="notice" style="border-left:5px solid var(--brand)">
+      <div style="display:flex;align-items:center;gap:8px"><span class="badge b-bsmi">聯絡窗口</span><b style="font-size:15px">${esc(g.group)}</b><span class="small muted" style="margin-left:auto">${g.people.length} 位</span></div>
+      ${g.people.map(p => {
+        const rows = contactRows(p);
+        return `<div style="padding:8px 0;border-top:1px dashed var(--line)">
+          ${p.role || p.company ? `<div style="margin-bottom:2px">${p.role ? `<span class="badge b-info">${esc(p.role)}</span> ` : ""}<b>${esc(p.company || "")}</b></div>` : ""}
+          <div style="display:flex;align-items:center;gap:8px"><span>👤 ${esc(p.name)}</span>${p.note ? `<span class="small muted">${esc(p.note)}</span>` : ""}
+          ${p.custom != null ? `<button class="btn sm danger" style="margin-left:auto" onclick="removeInboundContact(${p.custom})">刪除</button>` : ""}</div>
+          ${rows}</div>`;
+      }).join("")}
+    </div>`).join("");
+}
+function addInboundContact(){
+  const group = document.getElementById("ibGroup").value.trim(), name = document.getElementById("ibName").value.trim(), note = document.getElementById("ibNote").value.trim();
+  if (!group || !name) return toast("請輸入類別與姓名");
+  (S.inboundContacts = S.inboundContacts || []).push({group, name, note});
+  ["ibName","ibNote"].forEach(id => document.getElementById(id).value = "");
+  save(); renderInbound(); toast("已新增聯絡人");
+}
+function setLookupSub(v){
+  document.querySelectorAll("#lookupSub button").forEach(b => b.classList.toggle("active", b.dataset.v === v));
+  ["links","inbound"].forEach(k => document.getElementById("lookupPane-" + k).style.display = k === v ? "" : "none");
+}
+document.querySelectorAll("#lookupSub button").forEach(b => b.onclick = () => setLookupSub(b.dataset.v));function removeInboundContact(i){ if (!confirm("確定刪除此聯絡人？")) return; S.inboundContacts.splice(i, 1); save(); renderInbound(); }
+
+/* ---------- Outlook 每日同步（tools/update_from_outlook.py 產生 同步資料） ---------- */
+function applyOutlookSync(){
+  const O = window.OUTLOOK_SYNC; if (!O) return;
+  S.inspections = S.inspections || [];
+  const idOf = (decl, item) => { const p = decl.split("/").map(x => x.trim()).filter(Boolean); return `${p[0]}-${p[p.length-1]}${item ? "-" + item : ""}`; };
+  const label = f => {
+    if (f.type === "郵件"){ const m = f.name.match(/^郵件_(\d{4})(\d{2})(\d{2})_\d{4}_(.+)\.msg$/); return m ? `郵件 ${m[2]}/${m[3]} ${m[4].replace(/\(.*\)/, "")}` : f.name; }
+    if (f.type === "商檢明細") return /_\d{8}_\d{4}\./.test(f.name) ? "商檢明細（含核判）" : "商檢明細";
+    return f.type === "附件" ? f.name : f.type;
+  };
+  let added = 0, updated = 0;
+  O.shipments.forEach(sh => {
+    const shared = sh.files.filter(f => !["合格證","型式認可證書"].includes(f.type)).map(f => ({name: label(f), path: f.path}));
+    const items = sh.items.length ? sh.items : [{item: "", status: sh.files.some(f => f.type === "合格證") ? "合格" : "待確認"}];
+    items.forEach(it => {
+      const model = (String(it.desc || "").match(/\((\d{7})\)/) || [])[1] || "";
+      const tc = it.typeCert || (model && S.certs.filter(c => c.category === "型式認可" && modelKey(c.model) === model)
+        .sort((a,b) => String(b.expiryDate).localeCompare(String(a.expiryDate)))[0]?.certNo) || "";
+      const rec = {id: idOf(sh.declNo, it.item), declNo: sh.declNo, item: it.item || "", status: it.status, certNo: it.certNo || "",
+        issueDate: it.certDate || sh.firstDate.slice(0, 10), partNo: it.partNo || "", desc: it.desc || "", model, typeCert: tc,
+        qty: Number(it.qty) || 0, unit: it.unit || "", netWeight: it.netWeight ? `${it.netWeight} KGM` : "", origin: it.origin || "",
+        maker: it.maker || "", batch: it.batch || "", appNo: it.appNo || "", review: it.review || "", notes: it.note || "",
+        product: "鋁合金輪圈 WHEEL", hs: "8708.70.90.00.5", broker:"",
+        files: [...(it.certFiles || []).map(p => ({name: "合格證", path: p})), ...shared], source: "Outlook 自動同步"};
+      const ex = S.inspections.find(x => x.id === rec.id);
+      if (!ex){ S.inspections.push(rec); added++; return; }
+      const before = JSON.stringify(ex);
+      Object.entries(rec).forEach(([k, v]) => { if (!["files","status","notes","issueDate","source"].includes(k) && (ex[k] === "" || ex[k] == null || ex[k] === 0) && v) ex[k] = v; });
+      if (rec.status === "合格" && ex.status !== "合格"){ Object.assign(ex, {status: "合格", certNo: ex.certNo || rec.certNo, issueDate: rec.issueDate, notes: ex.notes ? `${ex.notes}；${rec.issueDate} 收到合格證` : ""}); }
+      const files = [...(ex.files || [])];
+      rec.files.forEach(f => { if (!files.some(x => x.path === f.path)) files.push(f); });
+      ex.files = files;
+      if (JSON.stringify(ex) !== before) updated++;
+    });
+    const ph = S.inspections.findIndex(x => x.id === idOf(sh.declNo, "") && !x.item);
+    if (sh.items.length && ph >= 0){
+      const p = S.inspections[ph];
+      sh.items.forEach(it => {
+        const r = S.inspections.find(x => x.id === idOf(sh.declNo, it.item)); if (!r) return;
+        if (!r.notes && p.notes) r.notes = p.notes;
+        if (!r.branch && p.branch) r.branch = p.branch;
+        (p.files || []).forEach(f => { if (!r.files.some(x => x.path === f.path)) r.files.push(f); });
+      });
+      S.inspections.splice(ph, 1); updated++;
+    }
+  });
+  S.outlookSync = {updatedAt: O.updatedAt, added, updated};
+  save();
+}
+function renderSync(){
+  const O = window.OUTLOOK_SYNC, el = document.getElementById("syncCard");
+  if (!O){ el.innerHTML = `<h3>Outlook 每日同步</h3><div class="callout warn small">尚未產生同步資料（同步資料）。請執行 tools\\run_update.cmd 或等待每日排程。</div>`; return; }
+  const age = Math.round((TODAY - parseDate(O.updatedAt)) / 86400000);
+  const mails = O.brokerMails || [];
+  el.innerHTML = `<h3>Outlook 每日同步 <span class="right">最後同步 ${esc(O.updatedAt)}${age > 1 ? ` <span class="badge b-warn">${age} 天未更新</span>` : ""}・本次新增 ${S.outlookSync?.added || 0} 筆、更新 ${S.outlookSync?.updated || 0} 筆</span></h3>
+    <div class="small muted" style="margin-bottom:8px">每天自動讀取 Outlook 中的「WHEEL商檢」郵件與報驗行來信，報驗紀錄自動新增／更新。</div>
+    <details><summary style="cursor:pointer;font-weight:600">報驗行來信（${mails.length} 封）</summary>
+      <div class="table-wrap" style="max-height:360px;margin-top:8px"><table><thead><tr><th>日期</th><th>主旨</th><th>內容摘要</th><th>附件</th></tr></thead><tbody>
+      ${mails.map(m => `<tr><td class="small" style="white-space:nowrap">${esc(m.date)}</td><td class="small"><b>${esc(m.subject)}</b>${m.msg ? `<div><a class="btn sm" href="${encodeURI(m.msg)}">✉ 開啟郵件</a></div>` : ""}</td><td class="small muted">${esc(m.snippet)}</td><td class="small">${esc((m.files || []).join("、"))}</td></tr>`).join("")}
+      </tbody></table></div></details>`;
+}
+
+applyOutlookSync();
+initCertFilters(); setImportTarget("certs"); renderAll();
+</script>
+</body>
+</html>

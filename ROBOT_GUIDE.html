@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPORT CENTER｜機器人說明</title>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--muted:#6b7487;--line:#e5e8f0;--brand:#cc0000;--brand2:#1f2a44;--ok:#16a34a;--warn:#d97706;--info:#2563eb}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7}
+  header{background:var(--brand2);color:#fff;padding:26px 20px;text-align:center}
+  header h1{margin:0;font-size:24px;letter-spacing:1px}
+  header p{margin:6px 0 0;color:#aab3c8;font-size:13px}
+  main{max-width:980px;margin:0 auto;padding:24px 20px 60px}
+  section{background:var(--card);border-radius:14px;box-shadow:0 1px 2px rgba(20,30,60,.05),0 4px 16px rgba(20,30,60,.06);padding:22px 26px;margin-bottom:18px}
+  h2{margin:0 0 12px;font-size:18px}
+  h3{font-size:15px;margin:16px 0 6px}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
+  th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+  th{background:#fafbfd;color:var(--muted);font-weight:600;white-space:nowrap}
+  .callout{background:#e8effd;color:#1e3a8a;border-radius:10px;padding:12px 14px;font-size:14px;margin:10px 0}
+  .callout.warn{background:#fdf3e2;color:#7c4a03}
+  a{color:var(--info)}
+  ul{margin:6px 0;padding-left:22px}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>IMPORT CENTER｜機器人說明</h1>
+  <p>給同事看的公開說明 · 不含內部路徑、帳號與聯絡資料</p>
+</header>
+<main>
+  <section>
+    <h2>1. 機器人是什麼</h2>
+    <p>機器人裝在維護者的電腦上，會定時讀取郵件與線上共用追蹤表，把可以公開的結果整理到這個頁面。</p>
+    <div class="callout"><b>只讀取，不會寄信。</b>機器人不會回覆、刪除或移動任何信件。需要回覆的事項仍由同事處理。</div>
+  </section>
+  <section>
+    <h2>2. 什麼時候更新</h2>
+    <ul>
+      <li><b>每天 08:30</b> 自動同步一次。</li>
+      <li>維護者的電腦必須開機並登入。電腦關機期間不會更新，下次排程才會補做。</li>
+      <li>打開這個網頁不會即時連線。你看到的是上次同步後發佈的內容。</li>
+    </ul>
+    <p class="callout warn">若頁面日期停在好幾天前，代表當天沒有成功同步，請再向維護者確認。</p>
+  </section>
+  <section>
+    <h2>3. 在這個公開頁面可以做什麼</h2>
+    <table>
+      <thead><tr><th>頁面</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td><b>總覽</b></td><td>看證書是否有效、是否已過期、下一張何時到期。這些狀態是打開頁面時計算的，不是機器人另外判斷。</td></tr>
+        <tr><td><b>證書清單</b></td><td>搜尋證書號碼、品名、型式。有正本的可以下載 PDF。</td></tr>
+        <tr><td><b>WHEEL鋁圈</b></td><td>看鋁圈型式認可證書與有效期限。</td></tr>
+        <tr><td><b>進口認證追蹤</b></td><td>查 SHP（可只輸入後幾碼）、用欄位篩選、點標題排序。來源是線上共用的進口認證追蹤表，機器人只讀取、不修改原表。</td></tr>
+        <tr><td><b>資訊查找</b></td><td>打開標準檢驗局與關港貿的公開查詢網站。</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>4. 這個公開頁沒有的內容</h2>
+    <p>以下只在完整內部版，不會出現在這個網址：</p>
+    <ul>
+      <li>郵件、逐批報驗附件、報關需求與待辦通知</li>
+      <li>年費通知、匯款資訊、聯絡人與廠商資料</li>
+      <li>內部系統連結</li>
+    </ul>
+    <p>需要完整版請直接向維護者索取，不要把內部檔案再轉寄出去。</p>
+  </section>
+  <section>
+    <h2>5. 機器人不會自動做的事</h2>
+    <ul>
+      <li>不會代替同事回信或完成外部系統上的申請</li>
+      <li>不會自動更新證書官方查詢匯出、年費通知單、測試報告</li>
+      <li>不會修改線上追蹤表</li>
+    </ul>
+  </section>
+</main>
+<footer>IMPORT CENTER · 機器人說明（公開版） · <a href="index.html">回到首頁</a></footer>
+</body>
+</html>

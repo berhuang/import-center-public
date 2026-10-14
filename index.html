@@ -265,6 +265,25 @@
       </div>
       <div id="shpResult"></div>
     </div>
+    <div class="card" style="margin-top:16px;border-top:4px solid #2563eb">
+      <h3>進口拖車追蹤表 <span class="right" id="dragInfo"></span></h3>
+      <div class="callout small" style="margin-bottom:10px">到港 → 清關放行 → 拖櫃 → 入倉。每天 08:30 自動更新。電腦需開機並登入。</div>
+      <div class="toolbar" style="margin-bottom:6px">
+        <input type="search" id="cntrQuery" placeholder="輸入貨櫃號碼查預計拖櫃日（可多筆，或只輸入後幾碼，如 6950231）" style="flex:1;min-width:360px;font-size:15px;padding:10px 12px">
+        <button class="btn primary" onclick="renderCntrLookup()">查詢</button>
+        <button class="btn" onclick="document.getElementById('cntrQuery').value='';renderCntrLookup()">清除</button>
+      </div>
+      <div id="cntrResult"></div>
+      <div class="grid kpis" id="dragKpis" style="margin-top:12px"></div>
+      <div class="toolbar" style="margin-top:12px">
+        <input type="search" id="dragQuery" placeholder="搜尋提單、SHP、櫃號、船名、證書…" style="min-width:280px">
+        <label class="small muted" style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="dragOpen" checked>只看未完成</label>
+        <button class="btn sm" onclick="dragFilters={};dragSort={k:'',dir:1};document.getElementById('dragOpen').checked=false;document.getElementById('dragQuery').value='';renderDragGrid()">清除篩選</button>
+        <span class="small muted" id="dragCount"></span>
+        <span class="small muted">最新在上</span>
+      </div>
+      <div class="table-wrap xl-wrap" style="max-height:62vh"><table class="xl" id="dragTable"></table></div>
+    </div>
     <div class="grid kpis" id="nykKpis" style="margin-top:16px"></div>
     <div class="card" style="margin-top:16px">
       <h3>進口認證追蹤表 <span class="right" id="nykCount"></span></h3>
@@ -520,9 +539,10 @@
 <div class="toast" id="toast"></div>
 
 <script src="data_nyk.js" onerror="window.NYK_TRACK=null"></script>
+<script src="data_drag.js" onerror="window.NYK_DRAG=null"></script>
 <script>
 /* ================= 初始資料 ================= */
-const SEED_VERSION = 7;
+const SEED_VERSION = 8;
 const SEED_NOTICES = [];
 const R = (certNo, product, model, hs, expiry, fee, notice, category, notes="") =>
   ({ id: certNo, certNo, category, product, model, hs, issuer:"經濟部標準檢驗局", issueDate:"", expiryDate:expiry,
@@ -721,6 +741,11 @@ function OFFICIAL_CERTS(){
         "TA1103D1600228","TA1103D1600217","TA1103D1600206","TA1103D1600190"].map(no => doc(no, "Y0", "")),
     ...["TA1143D1600540","TA1143D1600532","TA1143D1600521","TA1143D1600510","TA1143D1600509","TA1143D1600493",
         "TA1143D1600482","TA1143D1600471","TA1143D1600460","TA1143D1600452","TA1143D1600441"].map(no => doc(no, "00", "")),
+    ...["TA1103D1600035","TA1103D1600046","TA1103D1600057","TA1103D1600068","TA1103D1600079","TA1103D1600080",
+        "TA1103D1600091","TA1103D1600104","TA1103D1600115","TA1103D1600126","TA1103D1600137","TA1103D1600148",
+        "TA1103D1600159","TA1103D1600160","TA1103D1600171","TA1113D1600280","TA1133D1600401","TA1133D1600412"].map(no => doc(no, "", "")),
+    {...wheel, ...doc("TA1153D1600561","00","2026-10-12"), model:"1044267 (20x9J)", issueDate:"2026-10-12", expiryDate:"2029-10-11",
+      notes:"取代已取消延展的 TA1113D1600280"},
   ];
 }
 function applyOfficialCerts(certs){
@@ -786,6 +811,7 @@ const BSMI_TA_ROWS = [
   ["TA1143D1600521","1620228 (22X9 J)","2025-10-31","2028-10-30","87087090005","鋁合金輪圈",""],
   ["TA1143D1600532","2188223(21×9 1/2J)","2025-12-30","2028-12-29","87087090005","鋁合金輪圈",""],
   ["TA1143D1600540","2188224(21×10 1/2J)","2025-12-30","2028-12-29","87087090005","鋁合金輪圈",""],
+  ["TA1153D1600561","1044267(20*9 J)","2026-10-12","2029-10-11","87087090005","鋁合金輪圈",""],
 ];
 function applyBsmiTaExport(certs){
   const label = "BSMI 型式認可查詢（2026-02-22）";
@@ -1050,7 +1076,7 @@ function guessCol(headers, re, exclude){
 }
 
 /* ================= Render ================= */
-function renderAll(){ renderDash(); renderCerts(); renderFees(); renderPermits(); renderInsp(); renderTestReports(); renderSync(); renderLookup(); renderInbound(); renderVendors(); renderNyk(); }
+function renderAll(){ renderDash(); renderCerts(); renderFees(); renderPermits(); renderInsp(); renderTestReports(); renderSync(); renderLookup(); renderInbound(); renderVendors(); renderNyk(); renderDrag(); }
 
 function renderDash(){
   document.getElementById("todayLabel").textContent = `今天 ${iso(TODAY)}（民國 ${toROC(iso(TODAY))}）` + (S.sharedAt ? `｜資料版本 ${S.sharedAt}` : "");
@@ -1931,7 +1957,17 @@ document.getElementById("partSumSearch").addEventListener("input", renderParts);
 document.getElementById("trbInput").addEventListener("input", updateTrbCount);
 document.getElementById("vendorSearch").addEventListener("input", renderVendors);
 var nykFilters = {}, nykSort = {k:"", dir:1};
+var dragFilters = {}, dragSort = {k:"", dir:1};
 document.getElementById("nykOpen").addEventListener("input", renderNykGrid);
+document.getElementById("dragOpen").addEventListener("input", renderDragGrid);
+document.getElementById("cntrQuery").addEventListener("keydown", e => { if (e.key === "Enter") renderCntrLookup(); });
+document.getElementById("cntrQuery").addEventListener("input", () => { clearTimeout(window._cntrT); window._cntrT = setTimeout(renderCntrLookup, 250); });
+document.getElementById("dragQuery").addEventListener("input", () => { clearTimeout(window._dragT); window._dragT = setTimeout(renderDragGrid, 200); });
+document.getElementById("dragTable").addEventListener("input", e => {
+  const el = e.target; if (!el.dataset.k) return;
+  dragFilters[el.dataset.k] = el.value;
+  clearTimeout(window._dragF); window._dragF = setTimeout(() => renderDragGrid(el.dataset.k), 200);
+});
 document.getElementById("shpQuery").addEventListener("keydown", e => { if (e.key === "Enter") renderShpLookup(); });
 document.getElementById("shpQuery").addEventListener("input", () => { clearTimeout(window._shpT); window._shpT = setTimeout(renderShpLookup, 250); });
 document.getElementById("nykTable").addEventListener("input", e => {
@@ -1939,6 +1975,99 @@ document.getElementById("nykTable").addEventListener("input", e => {
   nykFilters[el.dataset.k] = el.value;
   clearTimeout(window._nykT); window._nykT = setTimeout(() => renderNykGrid(el.dataset.k), 200);
 });
+
+/* ---------- 拖櫃報關流程（同一份 Excel 的進口拖車追蹤表，data_drag.js） ---------- */
+const DRAG_COLS = [
+  ["status","狀態"], ["bl","提單"], ["shp","SHP"], ["cntr","櫃號"], ["mode","模式"], ["yard","櫃場"],
+  ["carrier","承運商"], ["trucker","托櫃公司"], ["cargo","貨物"], ["qty","件數"], ["insp","商檢"], ["certNo","證書"],
+  ["vessel","船名"], ["voyage","航次"], ["origin","出發"], ["dest","目的"],
+  ["eta","預計到港"], ["ata","實際到港"], ["customs","清關放行"], ["dragDate","預計拖櫃"], ["freeTime","FreeTime"],
+  ["days","日曆天"], ["ampm","時段"], ["remark","備註"]
+];
+const dragRows = () => ((window.NYK_DRAG && window.NYK_DRAG.rows) || []).map((r, i) => ({...r, _i:i}));
+function dragOpenRow(r){ return r.status !== "完成"; }
+function cntrTokens(raw){
+  return [...new Set(String(raw||"").toUpperCase().split(/[\s,，、;；\n\t]+/).map(s => s.trim()).filter(Boolean))];
+}
+function cntrMatch(cntr, token){
+  const s = String(cntr||"").toUpperCase().replace(/[\s-]/g, "");
+  const t = String(token||"").toUpperCase().replace(/[\s-]/g, "");
+  return !!(s && t && (s.includes(t) || s.endsWith(t)));
+}
+function renderCntrLookup(){
+  const box = document.getElementById("cntrResult");
+  if (!box) return;
+  const tokens = cntrTokens(document.getElementById("cntrQuery").value);
+  if (!tokens.length){ box.innerHTML = `<div class="small muted">輸入貨櫃號碼後會列出預計拖櫃日。可只打後幾碼。</div>`; return; }
+  const rows = dragRows();
+  box.innerHTML = tokens.map(tok => {
+    const hit = rows.filter(r => cntrMatch(r.cntr, tok)).sort((a,b) => (b._i||0) - (a._i||0));
+    if (!hit.length) return `<div class="callout warn" style="margin-top:10px">找不到貨櫃 <b class="mono">${esc(tok)}</b></div>`;
+    const cards = hit.map(r => `<div class="notice" style="margin-top:10px">
+      <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">
+        <b class="mono">${esc(r.cntr)}</b>
+        <span class="badge ${r.status==="完成"?"b-ok":"b-warn"}">${esc(r.status || "進行中")}</span>
+        <span class="small muted">${esc(r.dest || "")} ${esc(r.vessel || "")} ${esc(r.voyage || "")}</span>
+      </div>
+      <div class="amt" style="margin-top:6px">${esc(r.dragDate || "尚未填預計拖櫃日")}</div>
+      <div class="small muted">預計拖櫃日${r.ampm?`・${esc(r.ampm)}`:""}${r.freeTime?`・FreeTime ${esc(r.freeTime)}`:""}</div>
+      <div class="small" style="margin-top:6px">提單 ${esc(r.bl || "—")}・SHP ${esc(r.shp || "—")}・清關 ${esc(r.customs || "—")}・到港 ${esc(r.ata || r.eta || "—")}</div>
+      ${r.remark?`<div class="small muted">${esc(r.remark)}</div>`:""}
+    </div>`).join("");
+    return `<div class="small muted" style="margin-top:8px">「${esc(tok)}」找到 ${hit.length} 筆</div>${cards}`;
+  }).join("");
+}
+function renderDrag(){
+  const D = window.NYK_DRAG, rows = dragRows();
+  const el = document.getElementById("dragInfo");
+  if (!el) return;
+  el.innerHTML = D ? `最後同步 <b>${esc(D.updatedAt)}</b>・${rows.length} 筆` : "尚未同步";
+  renderCntrLookup();
+  const open = rows.filter(dragOpenRow).length;
+  document.getElementById("dragKpis").innerHTML = [
+    {cls:"info", label:"總櫃次", value:rows.length, hint:D ? D.source : ""},
+    {cls:open?"warn":"ok", label:"未完成", value:open, hint:"狀態不是完成"},
+    {cls:"ok", label:"完成", value:rows.length - open, hint:""},
+    {cls:"info", label:"海運", value:rows.filter(r=>r.mode==="海運").length, hint:`空運 ${rows.filter(r=>r.mode==="空運").length}`},
+  ].map(k=>`<div class="card kpi ${k.cls}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="hint">${esc(k.hint)}</div></div>`).join("");
+  renderDragGrid();
+}
+function sortDrag(k){ dragSort = {k, dir: dragSort.k === k ? -dragSort.dir : 1}; renderDragGrid(); }
+function renderDragGrid(focusKey){
+  if (typeof focusKey !== "string") focusKey = "";
+  const table = document.getElementById("dragTable");
+  if (!table) return;
+  const ae = document.activeElement;
+  const caret = focusKey && ae && ae.dataset && ae.dataset.k === focusKey ? ae.selectionStart : null;
+  const q = (document.getElementById("dragQuery").value || "").trim().toLowerCase();
+  const onlyOpen = document.getElementById("dragOpen").checked;
+  let list = dragRows().filter(r => {
+    if (onlyOpen && !dragOpenRow(r)) return false;
+    if (q && !Object.values(r).join(" ").toLowerCase().includes(q)) return false;
+    return DRAG_COLS.every(([k]) => {
+      const f = String(dragFilters[k] || "").trim().toLowerCase();
+      return !f || String(r[k] || "").toLowerCase().includes(f);
+    });
+  });
+  if (dragSort.k){
+    const k = dragSort.k, dir = dragSort.dir || 1;
+    list = list.slice().sort((a,b) => String(a[k]||"").localeCompare(String(b[k]||""), "zh-Hant", {numeric:true}) * dir);
+  } else list = list.slice().sort((a,b) => (b._i||0) - (a._i||0));
+  document.getElementById("dragCount").textContent = `顯示 ${list.length} / ${dragRows().length} 筆`;
+  const head = `<tr><th class="rn"></th>${DRAG_COLS.map(([k,label]) => `<th onclick="sortDrag('${k}')">${esc(label)}${dragSort.k===k?(dragSort.dir>0?" ▲":" ▼"):""}</th>`).join("")}</tr>`;
+  const filters = `<tr class="xl-filter"><th class="rn"></th>${DRAG_COLS.map(([k]) => `<th><input data-k="${k}" value="${esc(dragFilters[k]||"")}" placeholder="篩選"></th>`).join("")}</tr>`;
+  const body = list.slice(0, 800).map((r,i) => `<tr><td class="rn">${i+1}</td>${DRAG_COLS.map(([k]) => {
+    const v = r[k] || "";
+    if (k === "status") return `<td><span class="badge ${v==="完成"?"b-ok":v?"b-warn":"b-info"}">${esc(v || "進行中")}</span></td>`;
+    return `<td class="${k==="remark"?"wrap":""}" title="${esc(v)}">${esc(v)}</td>`;
+  }).join("")}</tr>`).join("");
+  const more = list.length > 800 ? `<tr><td class="empty" colspan="${DRAG_COLS.length+1}">還有 ${list.length-800} 筆，請再用欄位篩選</td></tr>` : "";
+  table.innerHTML = `<thead>${head}${filters}</thead><tbody>${body || `<tr><td class="empty" colspan="${DRAG_COLS.length+1}">沒有符合條件的資料</td></tr>`}${more}</tbody>`;
+  if (focusKey){
+    const input = [...table.querySelectorAll("input[data-k]")].find(x => x.dataset.k === focusKey);
+    if (input){ input.focus(); if (caret != null) try{ input.setSelectionRange(caret, caret); }catch(e){} }
+  }
+}
 
 /* ---------- 進口認證追蹤（NYK 拖櫃報關排程，tools/nyk_sync.py 產生 data_nyk.js） ---------- */
 const COO_NAME = {CN:"中國", MX:"墨西哥", MA:"摩洛哥", TR:"土耳其", IN:"印度", US:"美國", DE:"德國", NL:"荷蘭", JP:"日本", KR:"韓國", TW:"台灣", TH:"泰國", VN:"越南", CZ:"捷克", SK:"斯洛伐克", IT:"義大利"};

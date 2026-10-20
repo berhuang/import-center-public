@@ -170,6 +170,11 @@
 
   <!-- 證書清單 -->
   <section class="tab" id="tab-certs">
+    <div class="pill-tabs" id="certSub" style="margin-bottom:14px">
+      <button data-v="list" class="active">證書清單</button>
+      <button data-v="auth">BSMI授權</button>
+    </div>
+    <div id="certPane-list">
     <div class="card">
       <div class="toolbar">
         <div class="pill-tabs" id="agencyTabs"></div>
@@ -183,6 +188,15 @@
       </div>
       <div class="table-wrap"><table id="certTable"></table></div>
       <div class="small muted" style="margin-top:8px" id="certFoot"></div>
+    </div>
+    </div>
+    <div id="certPane-auth" style="display:none">
+      <div class="card">
+        <h3>BSMI授權 <span class="right" id="authCount"></span></h3>
+        <div class="callout small" style="margin-bottom:12px">只列出有證書號碼、且已有正本 PDF 的 BSMI 檔案。沒有證號的空白授權書不放在這裡。</div>
+        <div class="toolbar"><input type="search" id="authSearch" placeholder="搜尋證書號碼、品名、型式…"></div>
+        <div class="table-wrap"><table id="authTable"></table></div>
+      </div>
     </div>
   </section>
 
@@ -542,7 +556,7 @@
 <script src="data_drag.js" onerror="window.NYK_DRAG=null"></script>
 <script>
 /* ================= 初始資料 ================= */
-const SEED_VERSION = 8;
+const SEED_VERSION = 9;
 const SEED_NOTICES = [];
 const R = (certNo, product, model, hs, expiry, fee, notice, category, notes="") =>
   ({ id: certNo, certNo, category, product, model, hs, issuer:"經濟部標準檢驗局", issueDate:"", expiryDate:expiry,
@@ -1222,6 +1236,32 @@ function renderAgencyTabs(){
   const tabs = ["", ...AGENCIES.filter(a=>a!=="其他" || n(a))];
   document.getElementById("agencyTabs").innerHTML = tabs.map(a=>
     `<button class="${agencyFilter===a?"active":""}" onclick="agencyFilter='${a}';renderCerts()">${a||"全部"} <span class="muted">${n(a)}</span></button>`).join("");
+}
+function bsmiAuthFile(c){
+  return (c.files || []).find(f => /certificates\/.+\.pdf$/i.test(f.path || "")) || null;
+}
+function renderBsmiAuth(){
+  const q = (document.getElementById("authSearch").value || "").trim().toLowerCase();
+  const list = S.certs.map(c => ({c, s:certStatus(c), file:bsmiAuthFile(c)}))
+    .filter(({c, file}) => agencyOf(c) === "BSMI" && file && /^(TA|CI|V)/i.test(c.certNo))
+    .filter(({c}) => !q || [c.certNo, c.product, c.model, c.category].join(" ").toLowerCase().includes(q))
+    .sort((a,b) => String(a.c.certNo).localeCompare(String(b.c.certNo)));
+  document.getElementById("authCount").textContent = `${list.length} 份有證號檔案`;
+  document.getElementById("authTable").innerHTML = `<thead><tr><th>證書號碼</th><th>品名</th><th>型式</th><th>有效期限</th><th>狀態</th><th>檔案</th></tr></thead><tbody>` +
+    (list.map(({c,s,file}) => `<tr>
+      <td class="mono"><b>${esc(c.certNo)}</b></td>
+      <td>${esc(c.product)}</td>
+      <td>${esc(c.model)}</td>
+      <td>${esc(c.expiryDate)}</td>
+      <td><span class="badge ${s.cls}">${s.label}</span></td>
+      <td><a class="btn sm" href="${encodeURI(file.path)}" target="_blank">${esc(file.name || "開啟正本")}</a></td>
+    </tr>`).join("") || `<tr><td colspan="6" class="empty">沒有符合的有證號檔案</td></tr>`) + `</tbody>`;
+}
+function setCertSub(v){
+  document.querySelectorAll("#certSub button").forEach(b => b.classList.toggle("active", b.dataset.v === v));
+  document.getElementById("certPane-list").style.display = v === "list" ? "" : "none";
+  document.getElementById("certPane-auth").style.display = v === "auth" ? "" : "none";
+  if (v === "auth") renderBsmiAuth();
 }
 function renderCerts(){
   initCertFiltersKeep();
@@ -1938,6 +1978,8 @@ function gotoTab(t){
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>gotoTab(b.dataset.tab));
 let toastTimer; function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),2800); }
 ["certSearch","certStatus","certCat","certFee"].forEach(id=>document.getElementById(id).addEventListener("input", renderCerts));
+document.querySelectorAll("#certSub button").forEach(b => b.onclick = () => setCertSub(b.dataset.v));
+document.getElementById("authSearch").addEventListener("input", renderBsmiAuth);
 document.getElementById("permitSearch").addEventListener("input", renderPermits);
 document.getElementById("permitStatus").addEventListener("input", renderPermits);
 document.getElementById("permitGrouped").addEventListener("change", renderPermits);

@@ -556,7 +556,7 @@
 <script src="data_drag.js" onerror="window.NYK_DRAG=null"></script>
 <script>
 /* ================= 初始資料 ================= */
-const SEED_VERSION = 9;
+const SEED_VERSION = 10;
 const SEED_NOTICES = [];
 const R = (certNo, product, model, hs, expiry, fee, notice, category, notes="") =>
   ({ id: certNo, certNo, category, product, model, hs, issuer:"經濟部標準檢驗局", issueDate:"", expiryDate:expiry,
@@ -974,6 +974,12 @@ function mergeSeed(s){
     const notes = !old || String(seed.notes||"").includes(old) ? seed.notes : (seed.notes && !old.includes(seed.notes) ? `${old}；${seed.notes}` : old);
     const keep = {agency: ex.agency || seed.agency, notes, extra:{...(ex.extra||{}), ...seed.extra}};
     Object.assign(ex, structuredClone(seed), keep);
+  });
+  s.notices = s.notices || [];
+  SEED_NOTICES.forEach(seed => {
+    const ex = s.notices.find(n => n.no === seed.no);
+    if (!ex) return s.notices.push(structuredClone(seed));
+    if (seed.paid && !ex.paid) Object.assign(ex, {paid:true, paidDate: ex.paidDate || seed.paidDate, paidRef: ex.paidRef || seed.paidRef});
   });
   s.inspections = s.inspections || [];
   SEED_INSPECTIONS().forEach(seed => {
